@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -9,10 +9,7 @@ import {
   UserCog,
   ChevronDown,
   ChevronRight,
-  Users,
-  Building2,
   Package,
-  Truck,
 } from "lucide-react";
 import {
   Collapsible,
@@ -21,8 +18,17 @@ import {
 } from "@/components/ui/collapsible";
 
 const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [showContent, setShowContent] = useState(false);
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (isExpanded) {
+      // Mostra conteúdo DEPOIS da animação terminar (300ms)
+      const timer = setTimeout(() => setShowContent(true), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isExpanded]);
 
   const toggleMenu = (menuName: string) => {
     setOpenMenus((prev) =>
@@ -37,23 +43,49 @@ const Sidebar = () => {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
       className={`${
-        isExpanded ? "w-64" : "w-20"
-      } transition-all duration-300 ease-in-out bg-zinc-800 p-4 flex flex-col min-h-screen rounded-tr-3xl rounded-br-3xl overflow-hidden`}
+        isExpanded ? "w-72" : "w-20"
+      } fixed left-0 top-0 transition-all duration-300 ease-in-out bg-zinc-900/95 backdrop-blur-xl border-r border-zinc-800/50 p-5 flex flex-col shadow-2xl rounded-tr-2xl h-screen z-50`}
     >
       {isExpanded ? (
-        <div className="flex flex-col items-start w-full">
+        <div className="flex flex-col items-start w-full h-full">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white">DashBoard</h1>
+          <div
+            className={`mb-10 pb-6 border-b border-zinc-800/50 w-full transition-opacity duration-600 ${
+              showContent ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {/* Footer User */}
+            <div
+              className={`pt-5 mt-auto border-t border-zinc-800/50 flex items-center gap-3 w-full transition-opacity duration-200 ${
+                showContent ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <div className="w-11 h-11 bg-linear-to-br from-purple-500 to-purple-700 rounded-full flex shrink-0 items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm">DF</span>
+              </div>
+              <div className="overflow-hidden flex-1 min-w-0">
+                <p className="text-white font-semibold text-sm truncate">
+                  Davi Franco
+                </p>
+                <p className="text-zinc-500 text-xs truncate">Admin</p>
+              </div>
+            </div>
           </div>
 
-          <nav className="flex flex-col w-full gap-2 border-b border-zinc-700 pb-[275px]">
+          {/* Nav com scroll */}
+          <nav
+            className={`flex flex-col w-full gap-5 flex-1 overflow-y-auto no-scrollbar transition-opacity duration-200 ${
+              showContent ? "opacity-100" : "opacity-0"
+            }`}
+          >
             <Link
-              href="/dashboard"
-              className="text-gray-300 w-full p-3 rounded-xl hover:bg-zinc-700 flex items-center gap-3 transition-all"
+              href="/"
+              className="group w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center gap-3 transition-all duration-200"
             >
-              <LayoutDashboard className="h-5 w-5 flex shrink-0" />
-              <span className="font-semibold">Dashboard</span>
+              <LayoutDashboard className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform text-zinc-400" />
+              <span className="font-medium text-zinc-400 text-sm whitespace-nowrap">
+                Dashboard
+              </span>
             </Link>
 
             {/* Cadastros - Com Sub-menu */}
@@ -61,40 +93,42 @@ const Sidebar = () => {
               open={openMenus.includes("cadastros")}
               onOpenChange={() => toggleMenu("cadastros")}
             >
-              <CollapsibleTrigger className="text-gray-300 w-full p-3 rounded-xl hover:bg-zinc-700 flex items-center justify-between transition-all">
+              <CollapsibleTrigger className="group text-zinc-400 w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center justify-between transition-all duration-200">
                 <div className="flex items-center gap-3">
-                  <UserCog className="h-5 w-5 flex shrink-0" />
-                  <span className="font-semibold">Cadastros</span>
+                  <UserCog className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="font-medium text-sm whitespace-nowrap">
+                    Cadastros
+                  </span>
                 </div>
                 {openMenus.includes("cadastros") ? (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-4 w-4 transition-transform" />
                 ) : (
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 transition-transform" />
                 )}
               </CollapsibleTrigger>
 
-              <CollapsibleContent className="ml-8 mt-1 space-y-1">
+              <CollapsibleContent className="ml-9 mt-1 space-y-0.5 border-l-2 border-zinc-800 pl-3">
                 <Link
-                  href="/unidades"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Unidades"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Unidades
                 </Link>
                 <Link
-                  href="/produtos"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Produtos"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Produtos
                 </Link>
                 <Link
-                  href="/clientes"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Clientes"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Clientes
                 </Link>
                 <Link
-                  href="/fornecedores"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Fornecedores"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Fornecedores
                 </Link>
@@ -106,34 +140,36 @@ const Sidebar = () => {
               open={openMenus.includes("operacoes")}
               onOpenChange={() => toggleMenu("operacoes")}
             >
-              <CollapsibleTrigger className="text-gray-300 w-full p-3 rounded-xl hover:bg-zinc-700 flex items-center justify-between transition-all">
+              <CollapsibleTrigger className="group text-zinc-400 w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center justify-between transition-all duration-200">
                 <div className="flex items-center gap-3">
-                  <Package className="h-5 w-5 flex shrink-0" />
-                  <span className="font-semibold">Operações</span>
+                  <Package className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="font-medium text-sm whitespace-nowrap">
+                    Operações
+                  </span>
                 </div>
                 {openMenus.includes("operacoes") ? (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-4 w-4 transition-transform" />
                 ) : (
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 transition-transform" />
                 )}
               </CollapsibleTrigger>
 
-              <CollapsibleContent className="ml-8 mt-1 space-y-1">
+              <CollapsibleContent className="ml-9 mt-1 space-y-0.5 border-l-2 border-zinc-800 pl-3">
                 <Link
-                  href="/vendas"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Vendas"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Vendas
                 </Link>
                 <Link
-                  href="/estoque"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Estoque"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Estoque
                 </Link>
                 <Link
-                  href="/compras"
-                  className="block p-2 text-sm text-gray-400 hover:text-white hover:bg-zinc-700/50 rounded-lg transition-all"
+                  href="/Compras"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Compras
                 </Link>
@@ -143,53 +179,55 @@ const Sidebar = () => {
             {/* Settings - Link Normal */}
             <Link
               href="/settings"
-              className="text-gray-300 w-full p-3 rounded-xl hover:bg-zinc-700 flex items-center gap-3 transition-all"
+              className="group text-zinc-400 w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center gap-3 transition-all duration-200"
             >
-              <Settings className="h-5 w-5 flex shrink-0" />
-              <span className="font-semibold">Settings</span>
-            </Link>
-
-            {/* Logout - Link Normal */}
-            <Link
-              href="/logout"
-              className="text-gray-300 w-full p-3 rounded-xl hover:bg-zinc-700 flex items-center gap-3 transition-all"
-            >
-              <LogOut className="h-5 w-5 flex shrink-0" />
-              <span className="font-semibold">Logout</span>
+              <Settings className="h-5 w-5 flex shrink-0 group-hover:scale-110 text-zinc-400 transition-transform" />
+              <span className="font-medium text-sm text-zinc-400 whitespace-nowrap">
+                Settings
+              </span>
             </Link>
           </nav>
 
-          {/* Footer User */}
-          <div className="pt-4 flex items-center gap-3 fixed bottom-4">
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex shrink-0" />
-            <div className="overflow-hidden">
-              <p className="text-white font-semibold text-sm truncate">
-                Davi Franco
-              </p>
-              <p className="text-gray-400 text-xs truncate">Admin</p>
-            </div>
-          </div>
+          {/* Logout FORA do nav - fixo no final, não scrolla */}
+          <Link
+            href="/Login"
+            className={`group text-zinc-400 px-3 py-2.5 rounded-lg hover:bg-red-950/40  justify-center w-full hover:text-red-400 flex items-center gap-3 transition-all duration-200 mt-4 ${
+              showContent ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <LogOut className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform text-zinc-400" />
+            <span className="font-medium text-sm whitespace-nowrap text-zinc-400">
+              Logout
+            </span>
+          </Link>
         </div>
       ) : (
-        <div className="flex flex-col items-center w-full">
-          {/* Header Colapsado */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white">DB</h1>
+        <div className="flex flex-col items-center w-full mt-5">
+          {/* User Avatar quando colapsado */}
+          <div className="w-full flex fixed justify-center">
+            <div className="w-11 h-11 bg-linear-to-br from-purple-500 to-purple-700 rounded-full shadow-lg  flex items-center justify-center">
+              <span className="text-white font-bold text-sm">DF</span>
+            </div>
           </div>
 
           {/* Ícones quando colapsado */}
-          <nav className="flex flex-col items-center w-full gap-10">
-            <LayoutDashboard className="text-neutral-200 h-5 w-5" />
-            <UserCog className="text-neutral-200 h-5 w-5" />
-            <Package className="text-neutral-200 h-5 w-5" />
-            <Settings className="text-neutral-200 h-5 w-5" />
-            <LogOut className="text-neutral-200 h-5 w-5" />
+          <nav className="flex flex-col items-center mt-27 gap-5 overflow-y-auto no-scrollbar">
+            <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
+              <LayoutDashboard className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
+            </div>
+            <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
+              <UserCog className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
+            </div>
+            <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
+              <Package className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
+            </div>
+            <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
+              <Settings className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
+            </div>
+            <div className="group p-2.5 rounded-lg hover:bg-red-950/40 fixed bottom-4 transition-all duration-200">
+              <LogOut className="text-zinc-300 group-hover:text-red-400 h-5 w-5 group-hover:scale-110 transition-all" />
+            </div>
           </nav>
-
-          {/* User Avatar quando colapsado */}
-          <div className="mb-auto pt-4 border-t border-zinc-700 flex items-center justify-center fixed bottom-4">
-            <div className="w-10 h-10 bg-gray-300 rounded-full" />
-          </div>
         </div>
       )}
     </aside>
