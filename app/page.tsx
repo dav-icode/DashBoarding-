@@ -1,65 +1,199 @@
-import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertTriangleIcon } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <Card className="p-8 mx-10 my-10 bg-white/5 backdrop-blur-lg space-y-6 w-full">
+      {/* Header */}
+      <CardContent className="p-4 mb-2">
+        <h1 className="text-3xl font-bold text-zinc-100">Dashboard</h1>
+        <p className="text-gray-400 opacity-80 text-sm mt-2">
+          Visão geral dos seus projetos e finanças
+        </p>
+      </CardContent>
+
+      {/* Cards de Métricas */}
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Card 1 */}
+        <div className="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
+          <p className="text-gray-400 text-sm mb-2">Receita do Mês</p>
+          <h3 className="text-3xl font-bold text-white mb-2">R$ 15.400</h3>
+          <p className="text-green-400 text-sm">+12% vs mês anterior</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Card 2 */}
+        <div className="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
+          <p className="text-gray-400 text-sm mb-2">Projetos Ativos</p>
+          <h3 className="text-3xl font-bold text-white mb-2">8</h3>
+          <p className="text-blue-400 text-sm">3 finalizados este mês</p>
         </div>
-      </main>
-    </div>
+
+        {/* Card 3 */}
+        <div className="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
+          <p className="text-gray-400 text-sm mb-2">Clientes Ativos</p>
+          <h3 className="text-3xl font-bold text-white mb-2">12</h3>
+          <p className="text-purple-400 text-sm">2 novos este mês</p>
+        </div>
+
+        {/* Card 4 */}
+        <div className="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
+          <p className="text-gray-400 text-sm mb-2">A Receber</p>
+          <h3 className="text-3xl font-bold text-white mb-2">R$ 8.200</h3>
+          <p className="text-yellow-400 text-sm">4 pagamentos pendentes</p>
+        </div>
+      </CardContent>
+
+      {/* Gráfico + Projetos */}
+      <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Gráfico de Receita (2/3 da largura) */}
+
+        <div className="lg:col-span-2 bg-zinc-800 p-6 rounded-xl border border-zinc-700">
+          <h2 className="text-xl font-bold text-white mb-4">Receita Mensal</h2>
+          <div className="h-64 bg-zinc-900 rounded-lg flex items-end justify-around p-4 gap-2">
+            {/* Barras mockadas */}
+            <div className="flex flex-col items-center gap-2 flex-1">
+              <div
+                className="w-full bg-purple-500 rounded-t-lg"
+                style={{ height: "60%" }}
+              ></div>
+              <span className="text-gray-400 text-xs">Mai</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 flex-1">
+              <div
+                className="w-full bg-purple-500 rounded-t-lg"
+                style={{ height: "75%" }}
+              ></div>
+              <span className="text-gray-400 text-xs">Jun</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 flex-1">
+              <div
+                className="w-full bg-purple-500 rounded-t-lg"
+                style={{ height: "50%" }}
+              ></div>
+              <span className="text-gray-400 text-xs">Jul</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 flex-1">
+              <div
+                className="w-full bg-purple-500 rounded-t-lg"
+                style={{ height: "85%" }}
+              ></div>
+              <span className="text-gray-400 text-xs">Ago</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 flex-1">
+              <div
+                className="w-full bg-purple-500 rounded-t-lg"
+                style={{ height: "70%" }}
+              ></div>
+              <span className="text-gray-400 text-xs">Set</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 flex-1">
+              <div
+                className="w-full bg-purple-600 rounded-t-lg"
+                style={{ height: "90%" }}
+              ></div>
+              <span className="text-gray-400 text-xs">Out</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Lista de Projetos (1/3 da largura) */}
+        <div className="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
+          <h2 className="text-xl font-bold text-white mb-4">Projetos Ativos</h2>
+          <div className="space-y-4">
+            {/* Projeto 1 */}
+            <div className="pb-4 border-b border-zinc-700">
+              <h3 className="font-semibold text-white">
+                Website Institucional
+              </h3>
+              <p className="text-sm text-gray-400">Tech Solutions</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                  Em andamento
+                </span>
+                <span className="text-xs text-gray-500">5 dias</span>
+              </div>
+            </div>
+
+            {/* Projeto 2 */}
+            <div className="pb-4 border-b border-zinc-700">
+              <h3 className="font-semibold text-white">App Mobile</h3>
+              <p className="text-sm text-gray-400">StartupX</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
+                  Atrasado
+                </span>
+                <span className="text-xs text-gray-500">2 dias atrás</span>
+              </div>
+            </div>
+
+            {/* Projeto 3 */}
+            <div className="pb-4 border-b border-zinc-700">
+              <h3 className="font-semibold text-white">E-commerce</h3>
+              <p className="text-sm text-gray-400">Costa E-commerce</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                  Em andamento
+                </span>
+                <span className="text-xs text-gray-500">12 dias</span>
+              </div>
+            </div>
+
+            {/* Projeto 4 */}
+            <div>
+              <h3 className="font-semibold text-white">Dashboard Analytics</h3>
+              <p className="text-sm text-gray-400">Oliveira Consultoria</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                  Revisão
+                </span>
+                <span className="text-xs text-gray-500">3 dias</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+
+      {/* Alertas/Próximos Vencimentos */}
+      <CardContent className="bg-zinc-800 p-6 rounded-xl border border-zinc-700 mx-5">
+        
+        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <AlertTriangleIcon /> Próximos Vencimentos
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Alerta 1 */}
+          <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-lg">
+            <p className="text-yellow-400 font-semibold">Projeto: App Mobile</p>
+            <p className="text-gray-300 text-sm">Entrega atrasada em 2 dias</p>
+          </div>
+
+          {/* Alerta 2 */}
+          <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-lg">
+            <p className="text-blue-400 font-semibold">
+              Pagamento: Tech Solutions
+            </p>
+            <p className="text-gray-300 text-sm">R$ 4.250 - Vence em 3 dias</p>
+          </div>
+
+          {/* Alerta 3 */}
+          <div className="bg-purple-500/10 border border-purple-500/30 p-4 rounded-lg">
+            <p className="text-purple-400 font-semibold">Reunião: StartupX</p>
+            <p className="text-gray-300 text-sm">
+              Amanhã às 14h - Review do projeto
+            </p>
+          </div>
+
+          {/* Alerta 4 */}
+          <div className="bg-green-500/10 border border-green-500/30 p-4 rounded-lg">
+            <p className="text-green-400 font-semibold">
+              Pagamento: Costa E-commerce
+            </p>
+            <p className="text-gray-300 text-sm">
+              R$ 9.250 - Recebido hoje! 🎉
+            </p>
+          </div>
+        </div>
+
+      </CardContent>
+    </Card>
   );
 }

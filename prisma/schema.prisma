@@ -8,16 +8,15 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?    @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  sessions      Session[]
-  
   clients       Client[]
   sales         Sale[]
+  sessions      Session[]
 }
 
 model Account {
@@ -26,15 +25,15 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([provider, providerAccountId])
 }
 
@@ -47,40 +46,37 @@ model Session {
 }
 
 model Client {
-  id         String     @id @default(cuid())
-  name       String
-  email      String?    @unique
-  phone      String?
-  company    String?
-  createdAt  DateTime   @default(now())
-  
-  projects   Project[]
-  userId     String
-  user       User       @relation(fields: [userId], references: [id])
+  id        String    @id @default(cuid())
+  name      String
+  email     String?   @unique
+  phone     String?
+  company   String?
+  createdAt DateTime  @default(now())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  projects  Project[]
 }
 
 model Project {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  status      String     @default("In Progress")
+  status      String   @default("In Progress")
   price       Float?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   clientId    String
-  client      Client     @relation(fields: [clientId], references: [id])
-  
+  client      Client   @relation(fields: [clientId], references: [id])
   sales       Sale[]
 }
 
 model Sale {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   amount      Float
-  date        DateTime   @default(now())
+  date        DateTime @default(now())
   description String?
   projectId   String?
-  project     Project?   @relation(fields: [projectId], references: [id])
   userId      String
-  user        User       @relation(fields: [userId], references: [id])
+  project     Project? @relation(fields: [projectId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 }
