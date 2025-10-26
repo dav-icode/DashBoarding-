@@ -100,7 +100,7 @@ const DashboardPage = async () => {
       {/* Alertas/Próximos Vencimentos */}
       <CardContent className="bg-zinc-800 p-6 rounded-xl border border-zinc-700 mx-5">
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <AlertTriangleIcon /> Próximos Vencimentos
+          <AlertTriangleIcon /> Notificações
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Alerta 1 */}
