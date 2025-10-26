@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,7 +31,15 @@ const LoginPage = () => {
       email,
       password,
       redirect: false,
+
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60, // 30 dias ou 1 dia
     });
+
+    if (result?.error) {
+      setError("Email ou senha incorretos");
+    } else {
+      router.push("/dashboard");
+    }
 
     if (result?.error) {
       setError("Email ou senha incorretos");
@@ -47,7 +57,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
       <Card className="w-full max-w-md border-zinc-800 bg-zinc-900/50 backdrop-blur-xl shadow-2xl">
         <CardHeader>
           <h1 className="text-center text-3xl font-bold text-white">Login</h1>
@@ -110,7 +120,14 @@ const LoginPage = () => {
             {/* Checkbox e Link */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" className="border-zinc-600" />
+                <Checkbox
+                  id="remember"
+                  className="border-zinc-600"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) =>
+                    setRememberMe(checked as boolean)
+                  }
+                />
                 <Label
                   htmlFor="remember"
                   className="text-sm text-zinc-300 cursor-pointer"
@@ -175,7 +192,7 @@ const LoginPage = () => {
           <p className="text-center text-sm text-zinc-400">
             Não tem uma conta?{" "}
             <Link
-              href="/register"
+              href="/Register"
               className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
             >
               Registre-se

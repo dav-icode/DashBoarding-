@@ -51,21 +51,20 @@ model VerificationToken {
 // ========================================
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?   // ← ADICIONAR ESSA LINHA
-  createdAt     DateTime  @default(now())
+  id                String    @id @default(cuid())
+  name              String?
+  email             String?   @unique
+  emailVerified     DateTime?
+  image             String?
+  password          String?
+  resetToken        String?   @unique 
+  resetTokenExpiry  DateTime?           
+  createdAt         DateTime  @default(now())
   
-  // Relações NextAuth
-  accounts      Account[]
-  sessions      Session[]
-  
-  // Relações da aplicação
-  clients       Client[]
-  sales         Sale[]
+  accounts          Account[]
+  sessions          Session[]
+  clients           Client[]
+  sales             Sale[]
 }
 
 model Client {

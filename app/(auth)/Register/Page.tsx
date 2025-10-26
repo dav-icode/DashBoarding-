@@ -10,7 +10,6 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/actions/auth";
 
 const RegisterPage = () => {
@@ -51,7 +50,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
       <Card className="w-full max-w-md border-zinc-800 bg-zinc-900/50 backdrop-blur-xl shadow-2xl">
         <CardHeader>
           <h1 className="text-center text-3xl font-bold text-white">
@@ -213,7 +212,7 @@ const RegisterPage = () => {
           <p className="text-center text-sm text-zinc-400">
             Já possui uma conta?{" "}
             <Link
-              href="/login"
+              href="/Login"
               className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
             >
               Faça login
