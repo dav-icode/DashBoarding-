@@ -7,17 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  clients       Client[]
-  sales         Sale[]
-  sessions      Session[]
-}
+// ========================================
+// NEXTAUTH MODELS (para autenticação)
+// ========================================
 
 model Account {
   id                String  @id @default(cuid())
@@ -25,14 +17,15 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -43,6 +36,36 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ========================================
+// APPLICATION MODELS (seus dados)
+// ========================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // ← ADICIONAR ESSA LINHA
+  createdAt     DateTime  @default(now())
+  
+  // Relações NextAuth
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Relações da aplicação
+  clients       Client[]
+  sales         Sale[]
 }
 
 model Client {

@@ -16,6 +16,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { signOut } from "next-auth/react";
+import { Button } from "./ui/button";
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -189,9 +191,10 @@ const Sidebar = () => {
           </nav>
 
           {/* Logout FORA do nav - fixo no final, não scrolla */}
-          <Link
-            href="/Login"
-            className={`group text-zinc-400 px-3 py-2.5 rounded-lg hover:bg-red-950/40  justify-center w-full hover:text-red-400 flex items-center gap-3 transition-all duration-200 mt-4 ${
+          <Button
+            variant="ghost"
+            onClick={() => signOut({ callbackUrl: "/Login" })}
+            className={`group text-zinc-400 px-3 py-2.5 rounded-lg hover:bg-red-950/40 justify-center w-full hover:text-red-400 flex items-center gap-3 transition-all duration-200 mt-4 ${
               showContent ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -199,7 +202,7 @@ const Sidebar = () => {
             <span className="font-medium text-sm whitespace-nowrap text-zinc-400">
               Logout
             </span>
-          </Link>
+          </Button>
         </div>
       ) : (
         <div className="flex flex-col items-center w-full mt-5">
