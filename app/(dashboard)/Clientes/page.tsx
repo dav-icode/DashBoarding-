@@ -15,10 +15,9 @@ export default async function ClientesPage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/Login");
+    redirect("/login");
   }
 
-  // Buscar clientes do usuário
   const clientes = await db.client.findMany({
     where: {
       userId: session.user.id,
@@ -31,9 +30,17 @@ export default async function ClientesPage() {
     },
   });
 
+  const totalClientes = clientes.length;
+  const clientesAtivos = clientes.filter(
+    (cliente) => cliente.projects.length > 0
+  ).length;
+  const totalProjetos = clientes.reduce(
+    (acc, cliente) => acc + cliente.projects.length,
+    0
+  );
+
   return (
-    <Card className="p-6 flex gap-6 w-full mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg  rounded-tl-none border border-s-white/5 border-t-black/20">
-      {/* Header */}
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Clientes</h1>
@@ -47,13 +54,10 @@ export default async function ClientesPage() {
         </Button>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-white">
-              {clientes.length}
-            </div>
+            <div className="text-2xl font-bold text-white">{totalClientes}</div>
             <p className="text-sm text-zinc-400 mt-1">Total de Clientes</p>
           </CardContent>
         </Card>
@@ -61,7 +65,7 @@ export default async function ClientesPage() {
         <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-white">
-              {clientes.filter((c) => c.projects.length > 0).length}
+              {clientesAtivos}
             </div>
             <p className="text-sm text-zinc-400 mt-1">Clientes Ativos</p>
           </CardContent>
@@ -69,15 +73,12 @@ export default async function ClientesPage() {
 
         <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-white">
-              {clientes.reduce((acc, c) => acc + c.projects.length, 0)}
-            </div>
+            <div className="text-2xl font-bold text-white">{totalProjetos}</div>
             <p className="text-sm text-zinc-400 mt-1">Projetos Total</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Lista de Clientes */}
       <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
         <CardHeader>
           <CardTitle className="text-white">Todos os Clientes</CardTitle>
@@ -155,6 +156,6 @@ export default async function ClientesPage() {
           )}
         </CardContent>
       </Card>
-    </Card>
+    </div>
   );
 }

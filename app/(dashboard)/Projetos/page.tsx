@@ -17,6 +17,12 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Prisma } from "@prisma/client";
+
+// Tipo do projeto com relacionamentos
+type ProjetoComRelacionamentos = Prisma.ProjectGetPayload<{
+  include: { client: true; sales: true };
+}>;
 
 export default async function ProjetosPage() {
   const session = await auth();
@@ -26,7 +32,7 @@ export default async function ProjetosPage() {
   }
 
   // Buscar projetos
-  const projetos = await db.project.findMany({
+  const projetos: ProjetoComRelacionamentos[] = await db.project.findMany({
     include: {
       client: true,
       sales: true,
@@ -45,7 +51,7 @@ export default async function ProjetosPage() {
   };
 
   // Função para calcular valor recebido
-  const calcularRecebido = (projeto: (typeof projetos)[0]) => {
+  const calcularRecebido = (projeto: ProjetoComRelacionamentos) => {
     return projeto.sales.reduce((acc, sale) => acc + sale.amount, 0);
   };
 
