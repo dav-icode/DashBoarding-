@@ -17,7 +17,7 @@ export default async function VendasPage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/Login");
+    redirect("/login");
   }
 
   // Buscar vendas

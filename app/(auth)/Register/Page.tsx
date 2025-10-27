@@ -212,7 +212,7 @@ const RegisterPage = () => {
           <p className="text-center text-sm text-zinc-400">
             Já possui uma conta?{" "}
             <Link
-              href="/Login"
+              href="/login"
               className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
             >
               Faça login

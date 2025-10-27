@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
           <p className="text-center text-sm text-zinc-400">
             Lembrou sua senha?{" "}
             <Link
-              href="/Login"
+              href="/login"
               className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
             >
               Voltar ao login

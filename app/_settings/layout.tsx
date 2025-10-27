@@ -13,7 +13,7 @@ export default async function SettingsLayout({
   const session = await auth();
 
   if (!session) {
-    redirect("/Login");
+    redirect("/login");
   }
 
   return (

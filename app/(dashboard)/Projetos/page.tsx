@@ -28,7 +28,7 @@ export default async function ProjetosPage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/Login");
+    redirect("/login");
   }
 
   // Buscar projetos

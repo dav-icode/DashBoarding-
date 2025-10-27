@@ -16,7 +16,7 @@ export default async function SettingsProfilePage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/Login");
+    redirect("/login");
   }
 
   const initials =

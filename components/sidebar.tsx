@@ -164,7 +164,7 @@ const Sidebar = () => {
           {/* Logout FORA do nav - fixo no final, não scrolla */}
           <Button
             variant="ghost"
-            onClick={() => signOut({ callbackUrl: "/Login" })}
+            onClick={() => signOut({ callbackUrl: "/login" })}
             className={`group text-zinc-400 px-3 py-2.5 rounded-lg hover:bg-red-950/40 justify-center w-full hover:text-red-400 flex items-center gap-3 transition-all duration-200 mt-4 ${
               showContent ? "opacity-100" : "opacity-0"
             }`}
