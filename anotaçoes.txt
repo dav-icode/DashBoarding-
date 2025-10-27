@@ -1,0 +1,16 @@
+falta: 
+
+1. **Formulários de criar/editar**
+   - Botões "Novo Cliente" → não fazem nada ainda
+   - Botões "Ver detalhes" → não fazem nada ainda
+
+2. **Server Actions**
+   - Criar cliente
+   - Editar cliente
+   - Deletar cliente
+   - (mesmo para projetos e vendas)
+
+3. **Modais/Páginas de detalhes**
+   - Ver detalhes de um cliente
+   - Editar um projeto
+   - Ver histórico completo

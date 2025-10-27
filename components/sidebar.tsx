@@ -16,11 +16,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [openMenus, setOpenMenus] = useState<string[]>([]);
 
@@ -31,6 +32,16 @@ const Sidebar = () => {
       return () => clearTimeout(timer);
     }
   }, [isExpanded]);
+
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <div>Carregando ...</div>;
+  }
+
+  if (!session) {
+    return <div>Não autenticado</div>;
+  }
 
   const toggleMenu = (menuName: string) => {
     setOpenMenus((prev) =>
@@ -62,14 +73,21 @@ const Sidebar = () => {
                 showContent ? "opacity-100" : "opacity-0"
               }`}
             >
-              <div className="w-11 h-11 bg-linear-to-br from-purple-500 to-purple-700 rounded-full flex shrink-0 items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-sm">DF</span>
-              </div>
+              <Image
+                src={`${session.user?.image || "/default-avatar.png"}`}
+                alt="Avatar"
+                width={40}
+                height={40}
+                className="w-11 h-11 bg-linear-to-br from-purple-500 to-purple-700 rounded-full flex shrink-0 items-center justify-center shadow-lg"
+              />
+
               <div className="overflow-hidden flex-1 min-w-0">
                 <p className="text-white font-semibold text-sm truncate">
-                  Davi Franco
+                  {session.user?.name}
                 </p>
-                <p className="text-zinc-500 text-xs truncate">Admin</p>
+                <p className="text-zinc-500 text-xs truncate">
+                  {session.user?.email}
+                </p>
               </div>
             </div>
           </div>
@@ -89,53 +107,6 @@ const Sidebar = () => {
                 Dashboard
               </span>
             </Link>
-
-            {/* Cadastros - Com Sub-menu */}
-            <Collapsible
-              open={openMenus.includes("cadastros")}
-              onOpenChange={() => toggleMenu("cadastros")}
-            >
-              <CollapsibleTrigger className="group text-zinc-400 w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center justify-between transition-all duration-200">
-                <div className="flex items-center gap-3">
-                  <UserCog className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="font-medium text-sm whitespace-nowrap">
-                    Cadastros
-                  </span>
-                </div>
-                {openMenus.includes("cadastros") ? (
-                  <ChevronDown className="h-4 w-4 transition-transform" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 transition-transform" />
-                )}
-              </CollapsibleTrigger>
-
-              <CollapsibleContent className="ml-9 mt-1 space-y-0.5 border-l-2 border-zinc-800 pl-3">
-                <Link
-                  href="/Unidades"
-                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
-                >
-                  Unidades
-                </Link>
-                <Link
-                  href="/Produtos"
-                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
-                >
-                  Produtos
-                </Link>
-                <Link
-                  href="/Clientes"
-                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
-                >
-                  Clientes
-                </Link>
-                <Link
-                  href="/Fornecedores"
-                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
-                >
-                  Fornecedores
-                </Link>
-              </CollapsibleContent>
-            </Collapsible>
 
             {/* Operações - Com Sub-menu */}
             <Collapsible
@@ -158,22 +129,22 @@ const Sidebar = () => {
 
               <CollapsibleContent className="ml-9 mt-1 space-y-0.5 border-l-2 border-zinc-800 pl-3">
                 <Link
+                  href="/Clientes"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
+                >
+                  Clientes
+                </Link>
+                <Link
+                  href="/Projetos"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
+                >
+                  Projetos
+                </Link>
+                <Link
                   href="/Vendas"
                   className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Vendas
-                </Link>
-                <Link
-                  href="/Estoque"
-                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
-                >
-                  Estoque
-                </Link>
-                <Link
-                  href="/Compras"
-                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
-                >
-                  Compras
                 </Link>
               </CollapsibleContent>
             </Collapsible>
@@ -208,18 +179,19 @@ const Sidebar = () => {
         <div className="flex flex-col items-center w-full mt-5">
           {/* User Avatar quando colapsado */}
           <div className="w-full flex fixed justify-center">
-            <div className="w-11 h-11 bg-linear-to-br from-purple-500 to-purple-700 rounded-full shadow-lg  flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DF</span>
-            </div>
+            <Image
+              src={`${session.user?.image || "/default-avatar.png"}`}
+              alt="Avatar"
+              width={40}
+              height={40}
+              className="w-11 h-11 bg-linear-to-br from-purple-500 to-purple-700 rounded-full flex shrink-0 items-center justify-center shadow-lg"
+            />
           </div>
 
           {/* Ícones quando colapsado */}
           <nav className="flex flex-col items-center mt-27 gap-5 overflow-y-auto no-scrollbar">
             <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
               <LayoutDashboard className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
-            </div>
-            <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
-              <UserCog className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
             </div>
             <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
               <Package className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />

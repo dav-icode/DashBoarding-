@@ -1,5 +1,6 @@
 import RevenueChart from "@/components/RevenueChart";
 import { Card, CardContent } from "@/components/ui/card";
+import { auth } from "@/lib/auth";
 import {
   getMonthlyRevenue,
   getActiveProjectsCount,
@@ -17,6 +18,9 @@ const DashboardPage = async () => {
   const pendingPayments = await getPendingPaymentsCount();
   const projects = await getActiveProjects();
   const revenueChart = await getMonthlyRevenueChart();
+
+  const session = await auth();
+  console.log("User session:", session);
 
   return (
     <Card className="p-6 h-full mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg space-y-6 w-full rounded-tl-none border border-s-white/5 border-t-black/20 ">

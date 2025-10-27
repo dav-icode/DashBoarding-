@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // Duração de "Lembrar Senha"
 
   const router = useRouter();
 
@@ -34,12 +34,6 @@ const LoginPage = () => {
 
       maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60, // 30 dias ou 1 dia
     });
-
-    if (result?.error) {
-      setError("Email ou senha incorretos");
-    } else {
-      router.push("/dashboard");
-    }
 
     if (result?.error) {
       setError("Email ou senha incorretos");

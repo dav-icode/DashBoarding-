@@ -9,7 +9,6 @@ export async function registerUser(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Validação básica
   if (!name || !email || !password) {
     return { error: "Todos os campos são obrigatórios" };
   }
