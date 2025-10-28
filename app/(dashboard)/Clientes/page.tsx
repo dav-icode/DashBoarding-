@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
 import {
   Card,
   CardContent,
@@ -10,6 +9,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Mail, Phone, Building2 } from "lucide-react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { getClients } from "@/lib/queries/clients";
+import { totalClientes } from "@/lib/queries/clients";
+import { clientesAtivos } from "@/lib/queries/clients";
+import { totalProjetos } from "@/lib/queries/clients";
+import CreateClient from "@/components/create-client";
+import Link from "next/link";
 
 export default async function ClientesPage() {
   const session = await auth();
@@ -18,29 +24,17 @@ export default async function ClientesPage() {
     redirect("/login");
   }
 
-  const clientes = await db.client.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    include: {
-      projects: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const clientes = await getClients();
+  const total = await totalClientes();
+  const ativos = await clientesAtivos();
+  const projetos = await totalProjetos();
 
-  const totalClientes = clientes.length;
-  const clientesAtivos = clientes.filter(
-    (cliente) => cliente.projects.length > 0
-  ).length;
-  const totalProjetos = clientes.reduce(
-    (acc, cliente) => acc + cliente.projects.length,
-    0
-  );
+  if (!clientes) {
+    return <div>Carregando...</div>;
+  }
 
   return (
-    <div className="p-6 space-y-6">
+    <Card className="p-6 flex gap-6 w-full mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg  rounded-tl-none border border-s-white/5 border-t-black/20">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Clientes</h1>
@@ -48,32 +42,35 @@ export default async function ClientesPage() {
             Gerencie seus clientes e contatos
           </p>
         </div>
-        <Button className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Cliente
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Cliente
+            </Button>
+          </DialogTrigger>
+          <CreateClient />
+        </Dialog>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-white">{totalClientes}</div>
+            <div className="text-2xl font-bold text-white">{total}</div>
             <p className="text-sm text-zinc-400 mt-1">Total de Clientes</p>
           </CardContent>
         </Card>
 
         <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-white">
-              {clientesAtivos}
-            </div>
+            <div className="text-2xl font-bold text-white">{ativos}</div>
             <p className="text-sm text-zinc-400 mt-1">Clientes Ativos</p>
           </CardContent>
         </Card>
 
         <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-white">{totalProjetos}</div>
+            <div className="text-2xl font-bold text-white">{projetos}</div>
             <p className="text-sm text-zinc-400 mt-1">Projetos Total</p>
           </CardContent>
         </Card>
@@ -93,10 +90,15 @@ export default async function ClientesPage() {
               <p className="text-zinc-400 mb-4">
                 Nenhum cliente cadastrado ainda
               </p>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar Primeiro Cliente
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Cliente
+                  </Button>
+                </DialogTrigger>
+                <CreateClient />
+              </Dialog>
             </div>
           ) : (
             <div className="space-y-4">
@@ -111,6 +113,7 @@ export default async function ClientesPage() {
                         {cliente.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
+
                     <div>
                       <h3 className="font-semibold text-white">
                         {cliente.name}
@@ -131,10 +134,12 @@ export default async function ClientesPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+
+                  <div className="flex items-center gap-5 p-2">
                     <div className="text-right">
                       <p className="text-sm font-medium text-white">
-                        {cliente.projects.length} projeto(s)
+                        {cliente.projects.length}{" "}
+                        {cliente.projects.length > 1 ? "Projetos" : "Projeto"}
                       </p>
                       {cliente.company && (
                         <p className="text-xs text-zinc-500">
@@ -142,13 +147,15 @@ export default async function ClientesPage() {
                         </p>
                       )}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-zinc-700"
-                    >
-                      Ver detalhes
-                    </Button>
+                    <Link href={`/Clientes/${cliente.id}`}>
+                      <Button // fazer pagina com id do projeto para mostrar os detalhes
+                        variant="outline"
+                        size="sm"
+                        className="border-zinc-700"
+                      >
+                        Ver detalhes
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -156,6 +163,6 @@ export default async function ClientesPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </Card>
   );
 }
