@@ -111,6 +111,7 @@ model Sale {
   amount      Float
   date        DateTime @default(now())
   description String?
+  method      String?
   projectId   String?
   userId      String
   project     Project? @relation(fields: [projectId], references: [id])
