@@ -9,12 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  DollarSign,
-  TrendingUp,
-  Calendar,
-} from "lucide-react";
+import { Plus, DollarSign, TrendingUp, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { CreateSale } from "@/components/create-sale";
@@ -73,7 +68,7 @@ export default async function VendasPage() {
     .reduce((sum, s) => sum + s.amount, 0);
 
   return (
-    <div className="space-y-6">
+    <Card className="p-6 min-h-screen mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg space-y-6 w-full rounded-tl-none border border-s-white/5 border-t-black/20 ">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -103,7 +98,8 @@ export default async function VendasPage() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-white">
-                  R$ {totalRecebido.toLocaleString("pt-BR", {
+                  R${" "}
+                  {totalRecebido.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
@@ -122,7 +118,8 @@ export default async function VendasPage() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-white">
-                  R$ {recebidoMesAtual.toLocaleString("pt-BR", {
+                  R${" "}
+                  {recebidoMesAtual.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
@@ -236,6 +233,6 @@ export default async function VendasPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </Card>
   );
 }
