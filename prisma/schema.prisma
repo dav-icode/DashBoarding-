@@ -81,6 +81,12 @@ model Client {
   projects  Project[]
 }
 
+enum ProjectStatus {
+  Planning
+  InProgress
+  Completed
+}
+
 model Project {
   id          String   @id @default(cuid())
   name        String
@@ -92,6 +98,12 @@ model Project {
   clientId    String
   client      Client   @relation(fields: [clientId], references: [id])
   sales       Sale[]
+  startDate    DateTime?
+  deadline     DateTime?
+  completedAt  DateTime?
+  progress     Int?       @default(0)
+  estimatedHours Float?   // horas estimadas
+  workedHours    Float?   // horas trabalhadas
 }
 
 model Sale {

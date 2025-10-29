@@ -1,26 +1,29 @@
+import { AddProjectDialog } from "@/components/create-project";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import UpdateProject from "@/components/update-project";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
-  AlertCircle,
-  CheckCircle2,
-  Clock,
   Edit,
   FolderKanban,
   Mail,
   Phone,
   Plus,
   Trash2,
+  TriangleAlertIcon,
   User,
 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { deleteClient } from "@/lib/actions/delete-client";
+import { DeleteClientButton } from "@/components/DeleteClientButton";
 
 export default async function PageProjectsClient({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
 
@@ -28,9 +31,11 @@ export default async function PageProjectsClient({
     redirect("/login");
   }
 
+  const resolvedParams = await params;
+
   const cliente = await db.client.findFirst({
     where: {
-      id: params.id,
+      id: resolvedParams.id,
       userId: session.user.id,
     },
     include: {
@@ -47,17 +52,17 @@ export default async function PageProjectsClient({
   }
 
   return (
-    <Card className="p-6 flex gap-6 w-full mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg  rounded-tl-none border border-s-white/5 border-t-black/20">
+    <Card className="p-6 flex gap-6 w-full mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg rounded-tl-none border border-s-white/5 border-t-black/20">
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
           {/* INFORMAÇÕES DO CLIENTE */}
-          <div className="lg:col-span-1 space-y-4 border p-5 rounded-3xl border-zinc-700">
+          <div className="lg:col-span-1 space-y-5 border p-5 rounded-3xl border-zinc-700">
             <div>
               <h2 className="text-sm font-medium text-zinc-400 mb-1">
                 Empresa
               </h2>
               <h1 className="text-2xl font-bold text-white">
-                {cliente.company || "Sem empresa"}
+                {cliente.company || "CNPJ não cadastrado"}
               </h1>
             </div>
 
@@ -78,20 +83,22 @@ export default async function PageProjectsClient({
 
             {/* AÇÕES */}
             <div className="flex flex-col gap-2 pt-4">
-              <Button
-                variant="outline"
-                className="w-full border-zinc-700 hover:bg-zinc-800"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Editar Cliente
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full border-red-900 text-red-400 hover:bg-red-950 hover:text-red-300"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Deletar Cliente
-              </Button>
+              <Dialog>
+                <DialogTrigger>
+                  <Button
+                    variant="outline"
+                    className="w-full border-zinc-700 hover:bg-zinc-800"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar Cliente
+                  </Button>
+                </DialogTrigger>
+                <UpdateProject client={cliente} />
+              </Dialog>
+              <DeleteClientButton
+                clientId={cliente.id}
+                clientName={cliente.name}
+              />
             </div>
           </div>
 
@@ -107,10 +114,15 @@ export default async function PageProjectsClient({
                   Acompanhe o andamento dos projetos
                 </p>
               </div>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Projeto
-              </Button>
+              <Dialog>
+                <DialogTrigger>
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Projeto
+                  </Button>
+                </DialogTrigger>
+                <AddProjectDialog clientId={cliente.id} />
+              </Dialog>
             </div>
 
             {cliente.projects.length === 0 ? (
@@ -119,73 +131,111 @@ export default async function PageProjectsClient({
                 <p className="text-zinc-400 mb-4">
                   Nenhum projeto cadastrado ainda
                 </p>
-                <Button className="bg-purple-600 hover:bg-purple-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Criar Primeiro Projeto
-                </Button>
+                <Dialog>
+                  <DialogTrigger>
+                    <Button className="bg-purple-600 hover:bg-purple-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Criar Primeiro Projeto
+                    </Button>
+                  </DialogTrigger>
+                  <AddProjectDialog clientId={cliente.id} />
+                </Dialog>
               </div>
             ) : (
               <div className="space-y-3">
                 {cliente.projects.map((project) => {
-                  const getStatusBadge = (status: string) => {
-                    const styles = {
-                      "In Progress":
-                        "bg-blue-600/20 text-blue-400 border-blue-600/30",
-                      Completed:
-                        "bg-green-600/20 text-green-400 border-green-600/30",
-                      Planning:
-                        "bg-yellow-600/20 text-yellow-400 border-yellow-600/30",
-                    };
-                    return (
-                      styles[status as keyof typeof styles] ||
-                      "bg-zinc-600/20 text-zinc-400"
-                    );
-                  };
-
-                  const getStatusIcon = (status: string) => {
-                    switch (status) {
-                      case "In Progress":
-                        return <Clock className="h-3 w-3" />;
-                      case "Completed":
-                        return <CheckCircle2 className="h-3 w-3" />;
-                      case "Planning":
-                        return <AlertCircle className="h-3 w-3" />;
-                      default:
-                        return null;
-                    }
-                  };
+                  const isOverdue =
+                    project.deadline &&
+                    new Date() > new Date(project.deadline) &&
+                    project.status !== "Completed";
 
                   return (
-                    <div
+                    <Card
                       key={project.id}
-                      className="p-4 bg-zinc-800/50 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition-colors"
+                      className="bg-zinc-800 border-zinc-700"
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-white">
-                          {project.name}
-                        </h3>
-                        <Badge
-                          variant="outline"
-                          className={getStatusBadge(project.status)}
-                        >
-                          {getStatusIcon(project.status)}
-                          <span className="ml-1">{project.status}</span>
-                        </Badge>
-                      </div>
-                      {project.description && (
-                        <p className="text-sm text-zinc-400 line-clamp-2">
-                          {project.description}
-                        </p>
-                      )}
+                      <CardHeader>
+                        <div className="flex items-start justify-between border-b border-zinc-700 pb-4">
+                          <div>
+                            <CardTitle className="text-lg">
+                              {project.name}
+                            </CardTitle>
+                            {project.description && (
+                              <p className="text-sm text-zinc-400 mt-1">
+                                {project.description}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Badge com lógica visual */}
+                          <Badge
+                            className={
+                              isOverdue
+                                ? "bg-red-600"
+                                : project.status === "Completed"
+                                ? "bg-green-600"
+                                : project.status === "In Progress"
+                                ? "bg-blue-600"
+                                : "bg-zinc-600"
+                            }
+                          >
+                            {isOverdue
+                              ? ` ${(<TriangleAlertIcon />)} Atrasado`
+                              : project.status}
+                          </Badge>
+                        </div>
+
+                        {/* Barra de progresso */}
+                        {project.progress !== undefined && (
+                          <div className="mt-4">
+                            <div className="flex justify-between text-sm mb-1">
+                              <span className="text-zinc-400">Progresso</span>
+                              <span className="text-zinc-300">
+                                {project.progress}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-zinc-900 rounded-full h-2">
+                              <div
+                                className="bg-purple-600 h-2 rounded-full transition-all"
+                                style={{ width: `${project.progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Datas */}
+                        <div className="flex gap-4 mt-3 text-sm text-zinc-400">
+                          {project.startDate && (
+                            <span>
+                              Início:{" "}
+                              {new Date(project.startDate).toLocaleDateString()}
+                            </span>
+                          )}
+                          {project.deadline && (
+                            <span
+                              className={
+                                isOverdue ? "text-red-400 font-semibold" : ""
+                              }
+                            >
+                              Prazo:{" "}
+                              {new Date(project.deadline).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </CardHeader>
+
+                      {/* Preço */}
                       {project.price && (
-                        <p className="text-sm font-medium text-purple-400 mt-2">
-                          R${" "}
-                          {project.price.toLocaleString("pt-BR", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </p>
+                        <CardContent>
+                          <p className="text-xl font-bold text-purple-400 mt-3">
+                            R${" "}
+                            {project.price.toLocaleString("pt-BR", {
+                              minimumFractionDigits: 2,
+                            })}
+                          </p>
+                        </CardContent>
                       )}
-                    </div>
+                    </Card>
                   );
                 })}
               </div>
