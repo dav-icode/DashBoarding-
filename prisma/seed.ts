@@ -4,9 +4,11 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Iniciando seed do Dashboard...\n");
+  console.log("🌱 Iniciando seed COMPLETO do Dashboard...\n");
 
-  // Limpar banco
+  // ========================================
+  // LIMPEZA TOTAL
+  // ========================================
   console.log("🗑️  Limpando banco de dados...");
   await prisma.sale.deleteMany();
   await prisma.project.deleteMany();
@@ -17,7 +19,7 @@ async function main() {
   console.log("✅ Banco limpo!\n");
 
   // ========================================
-  // 1. CRIAR USUÁRIO (você!)
+  // USUÁRIO
   // ========================================
   console.log("👤 Criando usuário...");
   const hashedPassword = await bcrypt.hash("123456", 10);
@@ -25,107 +27,152 @@ async function main() {
   const user = await prisma.user.create({
     data: {
       email: "dev@dashboard.com",
-      name: "Davi Developer",
+      name: "Davi Franco",
       password: hashedPassword,
       image: "https://github.com/shadcn.png",
     },
   });
-  console.log(`✅ Usuário: ${user.name} (${user.email})`);
-  console.log(`🔑 Senha: 123456\n`);
+  console.log(`✅ Usuário: ${user.name} (${user.email})\n`);
 
   // ========================================
-  // 2. CRIAR 10 CLIENTES VARIADOS
+  // DATAS ÚTEIS
   // ========================================
-  console.log("🏢 Criando 10 clientes...");
+  const hoje = new Date();
+  const ontem = new Date(hoje); ontem.setDate(ontem.getDate() - 1);
+  const dias3 = new Date(hoje); dias3.setDate(dias3.getDate() + 3);
+  const dias5 = new Date(hoje); dias5.setDate(dias5.getDate() + 5);
+  const dias10 = new Date(hoje); dias10.setDate(dias10.getDate() - 10);
+  const dias15 = new Date(hoje); dias15.setDate(dias15.getDate() - 15);
+  const mes1 = new Date(hoje); mes1.setMonth(mes1.getMonth() - 1);
+  const mes2 = new Date(hoje); mes2.setMonth(mes2.getMonth() - 2);
+  const mes3 = new Date(hoje); mes3.setMonth(mes3.getMonth() - 3);
+  const mes4 = new Date(hoje); mes4.setMonth(mes4.getMonth() - 4);
+  const mes5 = new Date(hoje); mes5.setMonth(mes5.getMonth() - 5);
+  const diasAtras5 = new Date(hoje); diasAtras5.setDate(diasAtras5.getDate() - 5);
+
+  // ========================================
+  // CLIENTES (12 clientes)
+  // ========================================
+  console.log("🏢 Criando 12 clientes...");
   
   const clientes = await Promise.all([
+    // Cliente 1 - Ativo
     prisma.client.create({
       data: {
-        name: "Tech Solutions Brasil",
-        email: "contato@techsolutions.com.br",
+        name: "TechCorp Brasil",
+        email: "contato@techcorp.com.br",
         phone: "(11) 98765-4321",
-        company: "Tech Solutions LTDA",
+        company: "TechCorp Soluções LTDA",
         userId: user.id,
       },
     }),
+    // Cliente 2 - Ativo
     prisma.client.create({
       data: {
-        name: "Maria Oliveira",
-        email: "maria.oliveira@consultoria.com",
+        name: "Maria Consultoria",
+        email: "maria@consultoria.com",
         phone: "(21) 99876-5432",
-        company: "Oliveira Consultoria Empresarial",
+        company: "MC Consultoria Empresarial",
         userId: user.id,
       },
     }),
+    // Cliente 3 - Ativo
     prisma.client.create({
       data: {
-        name: "StartupX Inovação",
+        name: "StartupX",
         email: "hello@startupx.io",
         phone: "(11) 91234-5678",
-        company: "StartupX Inc",
+        company: "StartupX Innovation Inc",
         userId: user.id,
       },
     }),
+    // Cliente 4 - Ativo
     prisma.client.create({
       data: {
-        name: "Ana Costa",
-        email: "ana.costa@ecommerce.com",
+        name: "E-commerce Plus",
+        email: "contato@ecommerceplus.com",
         phone: "(85) 98888-7777",
-        company: "Costa E-commerce & Logistics",
+        company: "E-commerce Plus LTDA",
         userId: user.id,
       },
     }),
+    // Cliente 5 - Freelancer
     prisma.client.create({
       data: {
-        name: "Pedro Santos",
-        email: "pedro.santos@gmail.com",
+        name: "Pedro Designer",
+        email: "pedro@design.com",
         phone: "(48) 99999-1111",
-        company: null, // Freelancer
+        company: null,
         userId: user.id,
       },
     }),
+    // Cliente 6 - Restaurante
     prisma.client.create({
       data: {
-        name: "Restaurante Sabor & Arte",
-        email: "contato@saborearte.com.br",
+        name: "Restaurante Sabor",
+        email: "contato@sabor.com.br",
         phone: "(31) 97777-8888",
-        company: "Sabor & Arte Gastronomia LTDA",
+        company: "Sabor Gastronomia LTDA",
         userId: user.id,
       },
     }),
+    // Cliente 7 - Clínica
     prisma.client.create({
       data: {
-        name: "Dr. Carlos Mendes",
-        email: "dr.carlos@clinicamendes.com",
+        name: "Clínica Vida",
+        email: "contato@clinicavida.com",
         phone: "(41) 96666-5555",
-        company: "Clínica Mendes - Saúde e Bem-Estar",
+        company: "Clínica Vida Saúde",
         userId: user.id,
       },
     }),
+    // Cliente 8 - Academia
     prisma.client.create({
       data: {
-        name: "FitGym Academia",
+        name: "FitGym",
         email: "contato@fitgym.com.br",
         phone: "(11) 95555-4444",
-        company: "FitGym Rede de Academias",
+        company: "FitGym Academias LTDA",
         userId: user.id,
       },
     }),
+    // Cliente 9 - INATIVO (há 3 meses sem projeto)
     prisma.client.create({
       data: {
-        name: "Júlia Designer",
-        email: "julia.design@gmail.com",
+        name: "Cliente Antigo Corp",
+        email: "antigo@corp.com",
         phone: "(47) 94444-3333",
-        company: null, // Freelancer
+        company: "Antigo Corp",
         userId: user.id,
       },
     }),
+    // Cliente 10 - Escola
     prisma.client.create({
       data: {
-        name: "Escola Criativa Kids",
-        email: "contato@escolacriativa.edu.br",
+        name: "Escola Kids",
+        email: "contato@escolakids.edu.br",
         phone: "(71) 93333-2222",
-        company: "Escola Criativa Educação Infantil",
+        company: "Escola Kids Educação",
+        userId: user.id,
+      },
+    }),
+    // Cliente 11 - INATIVO (há 4 meses)
+    prisma.client.create({
+      data: {
+        name: "Empresa Pausada",
+        email: "pausada@empresa.com",
+        phone: "(62) 92222-1111",
+        company: "Empresa Pausada LTDA",
+        userId: user.id,
+      },
+    }),
+    // Cliente 12 - Agência
+    prisma.client.create({
+      data: {
+        name: "Agência Digital",
+        email: "contato@agenciadigital.com",
+        phone: "(81) 91111-0000",
+        company: "Agência Digital Marketing",
         userId: user.id,
       },
     }),
@@ -134,276 +181,336 @@ async function main() {
   console.log(`✅ ${clientes.length} clientes criados!\n`);
 
   // ========================================
-  // 3. CRIAR 15 PROJETOS COM VENDAS
+  // PROJETOS E VENDAS
   // ========================================
-  console.log("💼 Criando 15 projetos e vendas...\n");
-
-  // Datas dos últimos 6 meses
-  const hoje = new Date();
-  const mes1 = new Date(hoje); mes1.setMonth(mes1.getMonth() - 1);
-  const mes2 = new Date(hoje); mes2.setMonth(mes2.getMonth() - 2);
-  const mes3 = new Date(hoje); mes3.setMonth(mes3.getMonth() - 3);
-  const mes4 = new Date(hoje); mes4.setMonth(mes4.getMonth() - 4);
-  const mes5 = new Date(hoje); mes5.setMonth(mes5.getMonth() - 5);
-  const mes6 = new Date(hoje); mes6.setMonth(mes6.getMonth() - 6);
+  console.log("💼 Criando projetos estratégicos...\n");
 
   // ========================================
-  // PROJETO 1: Website Institucional - PAGO 100%
+  // 🔴 PROJETO 1: ATRASADO HÁ 5 DIAS (gera notificação)
   // ========================================
   const p1 = await prisma.project.create({
     data: {
-      name: "Website Institucional Moderno",
-      description: "Site responsivo com Next.js 14, animações Framer Motion e SEO otimizado",
-      status: "Completed",
-      price: 8500.0,
-      clientId: clientes[0].id,
-    },
-  });
-  await prisma.sale.createMany({
-    data: [
-      { amount: 4250.0, description: "Entrada 50% - Website", projectId: p1.id, userId: user.id, date: mes5 },
-      { amount: 4250.0, description: "Pagamento Final - Website", projectId: p1.id, userId: user.id, date: mes4 },
-    ],
-  });
-  console.log(`✅ ${p1.name} - R$ 8.500 (100% PAGO) ✅`);
-
-  // ========================================
-  // PROJETO 2: Sistema CRM - PAGAMENTO PARCIAL 40%
-  // ========================================
-  const p2 = await prisma.project.create({
-    data: {
-      name: "Sistema CRM Completo",
-      description: "CRM com gestão de leads, pipeline de vendas, relatórios e integrações",
+      name: "App Mobile Urgente",
+      description: "Aplicativo mobile com deadline vencido",
       status: "In Progress",
-      price: 18000.0,
+      price: 15000.0,
+      progress: 60,
+      startDate: mes2,
+      deadline: diasAtras5, // ← ATRASADO!
       clientId: clientes[0].id,
     },
   });
   await prisma.sale.create({
-    data: { amount: 7200.0, description: "Entrada 40% - CRM", projectId: p2.id, userId: user.id, date: mes3 },
+    data: { 
+      amount: 7500.0, 
+      description: "Entrada 50%", 
+      projectId: p1.id, 
+      userId: user.id, 
+      date: mes2 
+    },
   });
-  console.log(`✅ ${p2.name} - R$ 18.000 (PAGO: R$ 7.200) 🔄 Falta: R$ 10.800`);
+  console.log(`🔴 ${p1.name} - ATRASADO há 5 dias! (R$ 15.000 - Falta R$ 7.500)`);
 
   // ========================================
-  // PROJETO 3: Landing Page - PAGO 100%
+  // 🟡 PROJETO 2: DEADLINE EM 3 DIAS (gera notificação)
   // ========================================
-  const p3 = await prisma.project.create({
+  const p2 = await prisma.project.create({
     data: {
-      name: "Landing Page Alto Impacto",
-      description: "Landing page para captação de leads com funil de vendas integrado",
-      status: "Completed",
-      price: 3800.0,
+      name: "Website Corporativo",
+      description: "Site institucional moderno",
+      status: "In Progress",
+      price: 8500.0,
+      progress: 80,
+      startDate: mes1,
+      deadline: dias3, // ← VENCE EM 3 DIAS!
       clientId: clientes[1].id,
     },
   });
   await prisma.sale.create({
-    data: { amount: 3800.0, description: "Pagamento Integral - Landing", projectId: p3.id, userId: user.id, date: mes6 },
+    data: { 
+      amount: 4250.0, 
+      description: "Entrada 50%", 
+      projectId: p2.id, 
+      userId: user.id, 
+      date: mes1 
+    },
   });
-  console.log(`✅ ${p3.name} - R$ 3.800 (100% PAGO) ✅`);
+  console.log(`🟡 ${p2.name} - Deadline em 3 dias! (R$ 8.500 - Falta R$ 4.250)`);
 
   // ========================================
-  // PROJETO 4: App Mobile Delivery - PAGAMENTO PARCIAL 60%
+  // 🟢 PROJETO 3: PAGAMENTO RECEBIDO HOJE (gera notificação)
   // ========================================
-  const p4 = await prisma.project.create({
+  const p3 = await prisma.project.create({
     data: {
-      name: "App Mobile de Delivery",
-      description: "Aplicativo React Native com pedidos, pagamentos e tracking em tempo real",
+      name: "E-commerce Premium",
+      description: "Loja virtual completa",
       status: "In Progress",
-      price: 25000.0,
-      clientId: clientes[2].id,
+      price: 22000.0,
+      progress: 70,
+      startDate: mes2,
+      deadline: new Date(hoje.getFullYear(), hoje.getMonth() + 1, 15),
+      clientId: clientes[3].id,
     },
   });
   await prisma.sale.createMany({
     data: [
-      { amount: 10000.0, description: "Entrada 40% - App", projectId: p4.id, userId: user.id, date: mes2 },
-      { amount: 5000.0, description: "2ª Parcela 20% - App", projectId: p4.id, userId: user.id, date: mes1 },
+      { 
+        amount: 8800.0, 
+        description: "Entrada 40%", 
+        projectId: p3.id, 
+        userId: user.id, 
+        date: mes2 
+      },
+      { 
+        amount: 4400.0, 
+        description: "2ª Parcela - Recebido hoje! 🎉", 
+        projectId: p3.id, 
+        userId: user.id, 
+        date: hoje // ← HOJE!
+      },
     ],
   });
-  console.log(`✅ ${p4.name} - R$ 25.000 (PAGO: R$ 15.000) 🔄 Falta: R$ 10.000`);
+  console.log(`🟢 ${p3.name} - Pagamento recebido HOJE! R$ 4.400 (Total R$ 22.000)`);
 
   // ========================================
-  // PROJETO 5: E-commerce Completo - SEM PAGAMENTO
+  // 🟣 PROJETO 4: GRANDE VALOR PENDENTE (gera notificação)
+  // ========================================
+  const p4 = await prisma.project.create({
+    data: {
+      name: "Sistema ERP Completo",
+      description: "ERP com todos os módulos",
+      status: "In Progress",
+      price: 45000.0,
+      progress: 50,
+      startDate: mes3,
+      deadline: new Date(hoje.getFullYear(), hoje.getMonth() + 2, 1),
+      clientId: clientes[2].id,
+    },
+  });
+  await prisma.sale.create({
+    data: { 
+      amount: 13500.0, 
+      description: "Entrada 30%", 
+      projectId: p4.id, 
+      userId: user.id, 
+      date: mes3 
+    },
+  });
+  console.log(`🟣 ${p4.name} - R$ 45.000 (Falta R$ 31.500 - 70%)`);
+
+  // ========================================
+  // ⚪ PROJETO 5: SEM PROGRESSO HÁ 15 DIAS (gera notificação)
   // ========================================
   const p5 = await prisma.project.create({
     data: {
-      name: "Loja Virtual Premium",
-      description: "E-commerce full-stack com painel admin, gestão de estoque e multi-pagamento",
-      status: "Planning",
-      price: 22000.0,
-      clientId: clientes[3].id,
+      name: "Dashboard Analytics",
+      description: "Dashboard com gráficos",
+      status: "In Progress",
+      price: 12000.0,
+      progress: 30,
+      startDate: mes2,
+      deadline: new Date(hoje.getFullYear(), hoje.getMonth() + 1, 20),
+      clientId: clientes[4].id,
+      updatedAt: dias15, // ← SEM UPDATE HÁ 15 DIAS!
     },
   });
-  console.log(`✅ ${p5.name} - R$ 22.000 (PAGO: R$ 0) ⏳ A iniciar`);
+  await prisma.sale.create({
+    data: { 
+      amount: 6000.0, 
+      description: "Entrada 50%", 
+      projectId: p5.id, 
+      userId: user.id, 
+      date: mes2 
+    },
+  });
+  console.log(`⚪ ${p5.name} - SEM PROGRESSO há 15 dias (R$ 12.000 - Falta R$ 6.000)`);
 
   // ========================================
-  // PROJETO 6: Dashboard Analytics - PAGAMENTO PARCIAL 30%
+  // ✅ PROJETO 6: COMPLETO E PAGO
   // ========================================
   const p6 = await prisma.project.create({
     data: {
-      name: "Dashboard de Analytics",
-      description: "Dashboard com gráficos interativos, relatórios e KPIs em tempo real",
-      status: "In Progress",
-      price: 12000.0,
-      clientId: clientes[3].id,
+      name: "Landing Page Conversão",
+      description: "Landing page otimizada",
+      status: "Completed",
+      price: 4500.0,
+      progress: 100,
+      startDate: mes4,
+      deadline: mes3,
+      completedAt: mes3,
+      clientId: clientes[5].id,
     },
   });
   await prisma.sale.create({
-    data: { amount: 3600.0, description: "Entrada 30% - Dashboard", projectId: p6.id, userId: user.id, date: mes2 },
+    data: { 
+      amount: 4500.0, 
+      description: "Pagamento integral", 
+      projectId: p6.id, 
+      userId: user.id, 
+      date: mes3 
+    },
   });
-  console.log(`✅ ${p6.name} - R$ 12.000 (PAGO: R$ 3.600) 🔄 Falta: R$ 8.400`);
+  console.log(`✅ ${p6.name} - COMPLETO e PAGO (R$ 4.500)`);
 
   // ========================================
-  // PROJETO 7: Portfolio Pessoal - PAGO 100%
+  // PROJETO 7: DEADLINE EM 5 DIAS
   // ========================================
   const p7 = await prisma.project.create({
     data: {
-      name: "Portfolio Criativo + Blog",
-      description: "Site portfolio moderno com blog integrado e CMS",
-      status: "Completed",
-      price: 4200.0,
-      clientId: clientes[4].id,
+      name: "Sistema de Agendamento",
+      description: "Plataforma de agendamentos",
+      status: "In Progress",
+      price: 18000.0,
+      progress: 75,
+      startDate: mes2,
+      deadline: dias5, // ← 5 DIAS!
+      clientId: clientes[6].id,
     },
   });
   await prisma.sale.create({
-    data: { amount: 4200.0, description: "Pagamento Integral - Portfolio", projectId: p7.id, userId: user.id, date: mes5 },
+    data: { 
+      amount: 9000.0, 
+      description: "Entrada 50%", 
+      projectId: p7.id, 
+      userId: user.id, 
+      date: mes2 
+    },
   });
-  console.log(`✅ ${p7.name} - R$ 4.200 (100% PAGO) ✅`);
+  console.log(`🟡 ${p7.name} - Deadline em 5 dias (R$ 18.000 - Falta R$ 9.000)`);
 
   // ========================================
-  // PROJETO 8: Sistema de Agendamento - SEM PAGAMENTO
+  // PROJETO 8: PLANEJAMENTO (sem valor recebido)
   // ========================================
   const p8 = await prisma.project.create({
     data: {
-      name: "Sistema de Agendamento Online",
-      description: "Plataforma para agendamento de serviços com calendário e notificações",
-      status: "In Progress",
-      price: 15000.0,
-      clientId: clientes[4].id,
+      name: "App Fitness",
+      description: "Aplicativo de treinos",
+      status: "Planning",
+      price: 25000.0,
+      progress: 0,
+      clientId: clientes[7].id,
     },
   });
-  console.log(`✅ ${p8.name} - R$ 15.000 (PAGO: R$ 0) 🔄 Em andamento`);
+  console.log(`⏳ ${p8.name} - Planejamento (R$ 25.000 - Nada recebido ainda)`);
 
   // ========================================
-  // PROJETO 9: Site Restaurante + Cardápio Digital
+  // PROJETO 9: COMPLETO E PAGO
   // ========================================
   const p9 = await prisma.project.create({
     data: {
-      name: "Website + Cardápio Digital",
-      description: "Site institucional com cardápio digital interativo e pedidos online",
+      name: "Site Restaurante",
+      description: "Site com cardápio digital",
       status: "Completed",
       price: 6500.0,
+      progress: 100,
+      startDate: mes4,
+      deadline: mes3,
+      completedAt: mes3,
       clientId: clientes[5].id,
     },
   });
   await prisma.sale.createMany({
     data: [
-      { amount: 3250.0, description: "Entrada 50% - Site Restaurante", projectId: p9.id, userId: user.id, date: mes4 },
-      { amount: 3250.0, description: "Pagamento Final", projectId: p9.id, userId: user.id, date: mes3 },
+      { amount: 3250.0, description: "Entrada 50%", projectId: p9.id, userId: user.id, date: mes4 },
+      { amount: 3250.0, description: "Final", projectId: p9.id, userId: user.id, date: mes3 },
     ],
   });
-  console.log(`✅ ${p9.name} - R$ 6.500 (100% PAGO) ✅`);
+  console.log(`✅ ${p9.name} - COMPLETO e PAGO (R$ 6.500)`);
 
   // ========================================
-  // PROJETO 10: Sistema para Clínica - PAGAMENTO PARCIAL 50%
+  // PROJETO 10: Cliente INATIVO (há 3 meses)
   // ========================================
+  const mes3Atras = new Date(hoje);
+  mes3Atras.setMonth(mes3Atras.getMonth() - 3);
   const p10 = await prisma.project.create({
     data: {
-      name: "Sistema de Gestão Clínica",
-      description: "Sistema para agendamento de consultas, prontuários eletrônicos e financeiro",
-      status: "In Progress",
-      price: 28000.0,
-      clientId: clientes[6].id,
+      name: "Projeto Antigo",
+      description: "Último projeto deste cliente",
+      status: "Completed",
+      price: 8000.0,
+      progress: 100,
+      startDate: mes5,
+      deadline: mes4,
+      completedAt: mes4,
+      clientId: clientes[8].id, // ← Cliente que ficará inativo
+      updatedAt: mes3Atras, // ← 3 MESES ATRÁS!
     },
   });
   await prisma.sale.create({
-    data: { amount: 14000.0, description: "Entrada 50% - Sistema Clínica", projectId: p10.id, userId: user.id, date: mes1 },
+    data: { 
+      amount: 8000.0, 
+      description: "Pagamento integral", 
+      projectId: p10.id, 
+      userId: user.id, 
+      date: mes4 
+    },
   });
-  console.log(`✅ ${p10.name} - R$ 28.000 (PAGO: R$ 14.000) 🔄 Falta: R$ 14.000`);
+  console.log(`💤 ${p10.name} - Cliente INATIVO há 3 meses`);
 
   // ========================================
-  // PROJETO 11: App Fitness + Treinos
+  // PROJETO 11: GRANDE PROJETO EM ANDAMENTO
   // ========================================
   const p11 = await prisma.project.create({
     data: {
-      name: "App de Treinos Personalizados",
-      description: "Aplicativo mobile para gestão de treinos, alunos e pagamentos",
-      status: "Planning",
-      price: 19500.0,
-      clientId: clientes[7].id,
-    },
-  });
-  console.log(`✅ ${p11.name} - R$ 19.500 (PAGO: R$ 0) ⏳ Planejamento`);
-
-  // ========================================
-  // PROJETO 12: Site Portfolio Design - PAGO 100%
-  // ========================================
-  const p12 = await prisma.project.create({
-    data: {
-      name: "Portfolio de Design Interativo",
-      description: "Site portfolio com galeria de projetos e animações 3D",
-      status: "Completed",
-      price: 5800.0,
-      clientId: clientes[8].id,
-    },
-  });
-  await prisma.sale.create({
-    data: { amount: 5800.0, description: "Pagamento Único - Portfolio", projectId: p12.id, userId: user.id, date: mes3 },
-  });
-  console.log(`✅ ${p12.name} - R$ 5.800 (100% PAGO) ✅`);
-
-  // ========================================
-  // PROJETO 13: Plataforma Educacional
-  // ========================================
-  const p13 = await prisma.project.create({
-    data: {
-      name: "Plataforma de Ensino Online",
-      description: "Sistema EAD com vídeos, exercícios, certificados e área do aluno",
+      name: "Plataforma EAD",
+      description: "Sistema de ensino completo",
       status: "In Progress",
-      price: 32000.0,
+      price: 38000.0,
+      progress: 45,
+      startDate: mes2,
+      deadline: new Date(hoje.getFullYear(), hoje.getMonth() + 2, 28),
       clientId: clientes[9].id,
     },
   });
   await prisma.sale.createMany({
     data: [
-      { amount: 12800.0, description: "Entrada 40% - Plataforma EAD", projectId: p13.id, userId: user.id, date: mes2 },
-      { amount: 6400.0, description: "2ª Parcela 20%", projectId: p13.id, userId: user.id, date: hoje },
+      { amount: 15200.0, description: "Entrada 40%", projectId: p11.id, userId: user.id, date: mes2 },
+      { amount: 7600.0, description: "2ª Parcela 20%", projectId: p11.id, userId: user.id, date: mes1 },
     ],
   });
-  console.log(`✅ ${p13.name} - R$ 32.000 (PAGO: R$ 19.200) 🔄 Falta: R$ 12.800`);
+  console.log(`🔄 ${p11.name} - Em andamento (R$ 38.000 - Falta R$ 15.200)`);
 
   // ========================================
-  // PROJETO 14: Redesign de Site
+  // PROJETO 12: VENDA AVULSA (sem projeto - ontem)
   // ========================================
-  const p14 = await prisma.project.create({
+  await prisma.sale.create({
     data: {
-      name: "Redesign Completo de Website",
-      description: "Modernização visual e técnica com nova identidade digital",
-      status: "Planning",
-      price: 9800.0,
-      clientId: clientes[1].id,
+      amount: 2500.0,
+      description: "Consultoria avulsa - 5 horas",
+      userId: user.id,
+      date: ontem,
     },
   });
-  console.log(`✅ ${p14.name} - R$ 9.800 (PAGO: R$ 0) ⏳ Aprovação`);
+  console.log(`💰 Venda avulsa - Consultoria R$ 2.500 (ontem)`);
 
   // ========================================
-  // PROJETO 15: Sistema de Ponto Eletrônico
+  // PROJETO 13: Marketing Digital
   // ========================================
-  const p15 = await prisma.project.create({
+  const p13 = await prisma.project.create({
     data: {
-      name: "Sistema de Controle de Ponto",
-      description: "Sistema web para controle de ponto, folha de pagamento e relatórios",
+      name: "Campanha Marketing Digital",
+      description: "Gestão de redes sociais e ads",
       status: "In Progress",
-      price: 16500.0,
-      clientId: clientes[7].id,
+      price: 9500.0,
+      progress: 90,
+      startDate: mes1,
+      deadline: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 10),
+      clientId: clientes[11].id,
     },
   });
   await prisma.sale.create({
-    data: { amount: 8250.0, description: "Entrada 50% - Sistema Ponto", projectId: p15.id, userId: user.id, date: mes1 },
+    data: { 
+      amount: 9500.0, 
+      description: "Pagamento mensal", 
+      projectId: p13.id, 
+      userId: user.id, 
+      date: mes1 
+    },
   });
-  console.log(`✅ ${p15.name} - R$ 16.500 (PAGO: R$ 8.250) 🔄 Falta: R$ 8.250`);
+  console.log(`✅ ${p13.name} - Pago integralmente (R$ 9.500)`);
 
   // ========================================
-  // RESUMO FINANCEIRO COMPLETO
+  // RESUMO FINANCEIRO
   // ========================================
   const totalProjetos = await prisma.project.count();
   const totalVendas = await prisma.sale.aggregate({ _sum: { amount: true } });
@@ -413,16 +520,16 @@ async function main() {
   const contratos = totalContratos._sum.price || 0;
   const aReceber = contratos - recebido;
 
-  console.log("\n" + "=".repeat(60));
+  console.log("\n" + "=".repeat(70));
   console.log("💰 RESUMO FINANCEIRO COMPLETO");
-  console.log("=".repeat(60));
+  console.log("=".repeat(70));
   console.log(`📊 Total de Projetos: ${totalProjetos}`);
   console.log(`📊 Total de Clientes: ${clientes.length}`);
-  console.log(`💵 Total em Contratos: R$ ${contratos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
+  console.log(`💵 Valor Total em Contratos: R$ ${contratos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
   console.log(`✅ Total Recebido: R$ ${recebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
   console.log(`⏳ Total A Receber: R$ ${aReceber.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
   console.log(`📈 Taxa de Recebimento: ${((recebido / contratos) * 100).toFixed(1)}%`);
-  console.log("=".repeat(60));
+  console.log("=".repeat(70));
 
   // Status dos projetos
   const statusCount = await prisma.project.groupBy({
@@ -436,10 +543,19 @@ async function main() {
     console.log(`  ${emoji} ${s.status}: ${s._count}`);
   });
 
-  console.log("\n🎉 SEED COMPLETO! Pronto para estilizar! 🎨");
+  console.log("\n🔔 NOTIFICAÇÕES QUE DEVEM APARECER:");
+  console.log("  🔴 1 projeto atrasado (App Mobile Urgente)");
+  console.log("  🟡 2 deadlines próximos (Website em 3 dias, Sistema em 5 dias)");
+  console.log("  🟢 1 pagamento recebido hoje (E-commerce R$ 4.400)");
+  console.log("  🟣 Múltiplos pagamentos pendentes");
+  console.log("  ⚪ 1 projeto sem progresso há 15 dias (Dashboard)");
+  console.log("  💤 2 clientes inativos (há 3+ meses)");
+
+  console.log("\n🎉 SEED COMPLETO! Dashboard pronto para testar! 🚀");
   console.log("\n🔑 LOGIN:");
   console.log(`   Email: dev@dashboard.com`);
   console.log(`   Senha: 123456`);
+  console.log("\n💡 Acesse /dashboard para ver as notificações funcionando!\n");
 }
 
 main()

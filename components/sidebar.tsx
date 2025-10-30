@@ -6,10 +6,13 @@ import {
   LayoutDashboard,
   LogOut,
   Settings,
-  UserCog,
   ChevronDown,
   ChevronRight,
   Package,
+  BarChart3,
+  Calendar,
+  FileText,
+  CheckSquare,
 } from "lucide-react";
 import {
   Collapsible,
@@ -98,8 +101,9 @@ const Sidebar = () => {
               showContent ? "opacity-100" : "opacity-0"
             }`}
           >
+            {/* Dashboard */}
             <Link
-              href="/"
+              href="/dashboard"
               className="group w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center gap-3 transition-all duration-200"
             >
               <LayoutDashboard className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform text-zinc-400" />
@@ -145,6 +149,53 @@ const Sidebar = () => {
                   className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
                 >
                   Vendas
+                </Link>
+                <Link
+                  href="/Tarefas"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
+                >
+                  Tarefas
+                </Link>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Gestão - NOVO Com Sub-menu */}
+            <Collapsible
+              open={openMenus.includes("gestao")}
+              onOpenChange={() => toggleMenu("gestao")}
+            >
+              <CollapsibleTrigger className="group text-zinc-400 w-full px-3 py-2.5 rounded-lg hover:bg-zinc-800/60 hover:text-white flex items-center justify-between transition-all duration-200">
+                <div className="flex items-center gap-3">
+                  <BarChart3 className="h-5 w-5 flex shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="font-medium text-sm whitespace-nowrap">
+                    Gestão
+                  </span>
+                </div>
+                {openMenus.includes("gestao") ? (
+                  <ChevronDown className="h-4 w-4 transition-transform" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 transition-transform" />
+                )}
+              </CollapsibleTrigger>
+
+              <CollapsibleContent className="ml-9 mt-1 space-y-0.5 border-l-2 border-zinc-800 pl-3">
+                <Link
+                  href="/Relatorios"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
+                >
+                  Relatórios
+                </Link>
+                <Link
+                  href="/Calendario"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
+                >
+                  Calendário
+                </Link>
+                <Link
+                  href="/Faturas"
+                  className="block px-3 py-2 text-sm text-zinc-500 hover:text-white hover:bg-zinc-800/40 rounded-md transition-all duration-200 whitespace-nowrap"
+                >
+                  Faturas
                 </Link>
               </CollapsibleContent>
             </Collapsible>
@@ -195,6 +246,9 @@ const Sidebar = () => {
             </div>
             <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
               <Package className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
+            </div>
+            <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
+              <BarChart3 className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />
             </div>
             <div className="group p-2.5 rounded-lg hover:bg-zinc-800/60 transition-all duration-200">
               <Settings className="text-zinc-300 group-hover:text-white h-5 w-5 group-hover:scale-110 transition-all" />

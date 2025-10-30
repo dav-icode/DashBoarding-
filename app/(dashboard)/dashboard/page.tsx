@@ -9,7 +9,9 @@ import {
   getActiveProjects,
   getMonthlyRevenueChart,
 } from "@/lib/queries/dashboard";
-import { AlertTriangleIcon } from "lucide-react";
+import { getNotifications } from "@/lib/queries/notifications";
+import { NotificationsSection } from "@/components/notifications-section";
+import GlobalSearch from "@/components/GlobalSearch";
 
 const DashboardPage = async () => {
   const revenue = await getMonthlyRevenue();
@@ -20,16 +22,23 @@ const DashboardPage = async () => {
   const revenueChart = await getMonthlyRevenueChart();
 
   const session = await auth();
-  console.log("User session:", session);
+
+  const notifications = await getNotifications(session?.user?.id || "");
 
   return (
     <Card className="p-6 h-full mt-2 mr-1 ml-21 bg-white/5 backdrop-blur-lg space-y-6 w-full rounded-tl-none border border-s-white/5 border-t-black/20 ">
       {/* Header */}
-      <CardContent className="p-4 mb-2">
-        <h1 className="text-3xl font-bold text-zinc-100">Dashboard</h1>
-        <p className="text-gray-400 opacity-80 text-sm mt-2">
-          Visão geral dos seus projetos e finanças
-        </p>
+      <CardContent className="p-4 mb-2 flex justify-between items-center">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-3xl font-bold text-zinc-100">Dashboard</h1>
+          <p className="text-gray-400 opacity-80 text-sm mt-2">
+            Visão geral dos seus projetos e finanças
+          </p>
+        </div>
+        {/* GLOBALSEARCH */}
+        <CardContent className="px-10 w-[445px]">
+          <GlobalSearch />
+        </CardContent>
       </CardContent>
 
       {/* Cards de Métricas */}
@@ -102,43 +111,8 @@ const DashboardPage = async () => {
       </CardContent>
 
       {/* Alertas/Próximos Vencimentos */}
-      <CardContent className="bg-zinc-800 p-6 rounded-xl border border-zinc-700 mx-5">
-        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <AlertTriangleIcon /> Notificações
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Alerta 1 */}
-          <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-lg">
-            <p className="text-yellow-400 font-semibold">Projeto: App Mobile</p>
-            <p className="text-gray-300 text-sm">Entrega atrasada em 2 dias</p>
-          </div>
-
-          {/* Alerta 2 */}
-          <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-lg">
-            <p className="text-blue-400 font-semibold">
-              Pagamento: Tech Solutions
-            </p>
-            <p className="text-gray-300 text-sm">R$ 4.250 - Vence em 3 dias</p>
-          </div>
-
-          {/* Alerta 3 */}
-          <div className="bg-purple-500/10 border border-purple-500/30 p-4 rounded-lg">
-            <p className="text-purple-400 font-semibold">Reunião: StartupX</p>
-            <p className="text-gray-300 text-sm">
-              Amanhã às 14h - Review do projeto
-            </p>
-          </div>
-
-          {/* Alerta 4 */}
-          <div className="bg-green-500/10 border border-green-500/30 p-4 rounded-lg">
-            <p className="text-green-400 font-semibold">
-              Pagamento: Costa E-commerce
-            </p>
-            <p className="text-gray-300 text-sm">
-              R$ 9.250 - Recebido hoje! 🎉
-            </p>
-          </div>
-        </div>
+      <CardContent className="bg-zinc-800 p-5 rounded-xl border border-zinc-700 mx-5">
+        <NotificationsSection notifications={notifications} />
       </CardContent>
     </Card>
   );

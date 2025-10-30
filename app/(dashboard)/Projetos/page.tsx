@@ -118,7 +118,7 @@ export default async function ProjetosPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-800 bg-blue-950/30 border-blue-900/30">
+        <Card className="border zinc-800 bg-blue-950/30 border-blue-900/30">
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-blue-400">
               {stats.inProgress}
@@ -127,7 +127,7 @@ export default async function ProjetosPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-800 bg-green-950/30 border-green-900/30">
+        <Card className="border zinc-800 bg-green-950/30 border-green-900/30">
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-green-400">
               {stats.completed}
@@ -136,7 +136,7 @@ export default async function ProjetosPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-800 bg-yellow-950/30 border-yellow-900/30">
+        <Card className="border zinc-800 bg-yellow-950/30 border-yellow-900/30">
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-yellow-400">
               {stats.planning}
@@ -160,7 +160,7 @@ export default async function ProjetosPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-800 bg-green-950/30 border-green-900/30">
+        <Card className="border zinc-800 bg-green-950/30 border-green-900/30">
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-green-400">
               R${" "}
@@ -172,7 +172,7 @@ export default async function ProjetosPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-800 bg-yellow-950/30 border-yellow-900/30">
+        <Card className="border zinc-800 bg-yellow-950/30 border-yellow-900/30">
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-yellow-400">
               R${" "}
