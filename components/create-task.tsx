@@ -20,35 +20,48 @@ import {
 } from "./ui/select";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createProject } from "@/lib/actions/project"; // ← importa a action
+import { createTask } from "@/lib/actions/task";
 
-interface AddProjectDialogProps {
-  clientId: string;
+interface AddTaskDialogProps {
+  projectId?: string; // ← OPCIONAL (se vier de página de projeto específico)
+  projects?: { id: string; name: string; client: { name: string } }[]; // ← LISTA DE PROJETOS
 }
 
-export function AddTaskDialog({ clientId }: AddProjectDialogProps) {
+export function AddTaskDialog({ projectId, projects }: AddTaskDialogProps) {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("Pending");
-  const [demanda, setDemanda] = useState("");
+  const [status, setStatus] = useState("todo");
+  const [prioridade, setPrioridade] = useState("media");
+  const [selectedProjectId, setSelectedProjectId] = useState(projectId || "");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    formData.append("clientId", clientId); // ← adiciona o clientId
-    formData.append("status", status); // ← adiciona o status
+    // ✅ VALIDA PROJETO
+    const finalProjectId = projectId || selectedProjectId;
 
-    const result = await createProject(formData);
-
-    if (result.error) {
-      alert(result.error);
-      setLoading(false);
+    if (!finalProjectId) {
+      alert("Selecione um projeto!");
       return;
     }
 
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    formData.append("projectId", finalProjectId); // ← PASSA projectId
+    formData.append("status", status);
+    formData.append("prioridade", prioridade);
+
+    const result = await createTask(formData);
+
     setLoading(false);
+
+    if (result.error) {
+      alert(result.error);
+      return;
+    }
+
+    alert("Tarefa criada com sucesso!");
     router.refresh();
   };
 
@@ -56,17 +69,41 @@ export function AddTaskDialog({ clientId }: AddProjectDialogProps) {
     <DialogContent className="sm:max-w-lg bg-zinc-900/95 border-zinc-800 text-white">
       <DialogHeader>
         <DialogTitle>Adicionar Tarefa</DialogTitle>
-        <DialogDescription>Preencha os dados da Tarefa.</DialogDescription>
+        <DialogDescription>
+          Crie uma nova tarefa para o projeto.
+        </DialogDescription>
       </DialogHeader>
 
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
+          {/* ✅ SELECT DE PROJETO - SÓ APARECE SE NÃO TIVER projectId FIXO */}
+          {!projectId && projects && projects.length > 0 && (
+            <div className="grid gap-2">
+              <Label htmlFor="project">Projeto *</Label>
+              <Select
+                value={selectedProjectId}
+                onValueChange={setSelectedProjectId}
+              >
+                <SelectTrigger className="bg-zinc-800 border-zinc-700">
+                  <SelectValue placeholder="Selecione um projeto" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700">
+                  {projects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name} - {project.client.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="grid gap-2">
             <Label htmlFor="name">Nome da Tarefa *</Label>
             <Input
               id="name"
               name="name"
-              placeholder="Ex: feature-1"
+              placeholder="Ex: Implementar login"
               required
               className="bg-zinc-800 border-zinc-700"
             />
@@ -77,70 +114,46 @@ export function AddTaskDialog({ clientId }: AddProjectDialogProps) {
             <Input
               id="description"
               name="description"
-              placeholder="Descrição da Tarefa"
+              placeholder="Descrição da tarefa"
               className="bg-zinc-800 border-zinc-700"
             />
           </div>
-          <div className="flex flex-row justify-between mx-20 py-3">
+
+          <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">Status *</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="bg-zinc-800 border-zinc-700">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-zinc-800 border-zinc-700">
-                  <SelectItem value="Planning">Pendente</SelectItem>
-                  <SelectItem value="In Progress">Em Progresso</SelectItem>
-                  <SelectItem value="Completed">Concluído</SelectItem>
+                  <SelectItem value="todo">A Fazer</SelectItem>
+                  <SelectItem value="doing">Em Progresso</SelectItem>
+                  <SelectItem value="review">Em Revisão</SelectItem>
+                  <SelectItem value="done">Concluído</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="status">Demanda</Label>
-              <Select value={demanda} onValueChange={setDemanda}>
+              <Label htmlFor="prioridade">Prioridade *</Label>
+              <Select value={prioridade} onValueChange={setPrioridade}>
                 <SelectTrigger className="bg-zinc-800 border-zinc-700">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-zinc-800 border-zinc-700">
-                  <SelectItem value="Baixa">Baixa</SelectItem>
-                  <SelectItem value="Media">Média</SelectItem>
-                  <SelectItem value="Alta">Alta</SelectItem>
+                  <SelectItem value="baixa">Baixa</SelectItem>
+                  <SelectItem value="media">Média</SelectItem>
+                  <SelectItem value="alta">Alta</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="grid gap-2 mb-2">
-            <Label htmlFor="name">Nome do Projeto *</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="Ex: Ecommerce"
-              required
-              className="bg-zinc-800 border-zinc-700"
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="deadline">Data de Entrega</Label>
-            <Input
-              id="deadline"
-              name="deadline"
-              type="date"
-              className="bg-zinc-800 border-zinc-700"
-            />
           </div>
         </div>
 
         <DialogFooter className="gap-2">
           <DialogClose asChild>
-            <Button
-              className="bg-zinc-800 hover:bg-zinc-700"
-              type="button"
-              variant="outline"
-              disabled={loading}
-            >
+            <Button type="button" variant="outline" disabled={loading}>
               Cancelar
             </Button>
           </DialogClose>

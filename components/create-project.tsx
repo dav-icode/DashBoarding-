@@ -20,24 +20,34 @@ import {
 } from "./ui/select";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createProject } from "@/lib/actions/project"; // ← importa a action
+import { createProject } from "@/lib/actions/project";
 
 interface AddProjectDialogProps {
-  clientId: string;
+  clientId?: string; // ← AGORA É OPCIONAL
+  clients?: { id: string; name: string; company: string | null }[]; // ← LISTA DE CLIENTES
 }
 
-export function AddProjectDialog({ clientId }: AddProjectDialogProps) {
+export function AddProjectDialog({ clientId, clients }: AddProjectDialogProps) {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("Pending");
+  const [status, setStatus] = useState("Planning");
+  const [selectedClientId, setSelectedClientId] = useState(clientId || ""); // ← NOVO STATE
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+
+    // ✅ VALIDA SE TEM CLIENTE SELECIONADO
+    const finalClientId = clientId || selectedClientId;
+
+    if (!finalClientId) {
+      alert("Erro: Selecione um cliente!");
+      setLoading(false);
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
-    formData.append("clientId", clientId); // ← adiciona o clientId
-    formData.append("status", status); // ← adiciona o status
+    formData.append("clientId", finalClientId); // ← USA O CLIENTE CORRETO
+    formData.append("status", status);
 
     const result = await createProject(formData);
 
@@ -52,7 +62,7 @@ export function AddProjectDialog({ clientId }: AddProjectDialogProps) {
   };
 
   return (
-    <DialogContent className="sm:max-w-lg bg-zinc-900/95 border-zinc-800 text-white">
+    <DialogContent className="sm:max-w-lg bg-zinc-900/95 border-zinc-800 text-white max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Adicionar Projeto</DialogTitle>
         <DialogDescription>
@@ -62,6 +72,28 @@ export function AddProjectDialog({ clientId }: AddProjectDialogProps) {
 
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
+          {/* ✅ SELECT DE CLIENTE - SÓ APARECE SE NÃO TIVER clientId FIXO */}
+          {!clientId && clients && clients.length > 0 && (
+            <div className="grid gap-2">
+              <Label htmlFor="client">Cliente *</Label>
+              <Select
+                value={selectedClientId}
+                onValueChange={setSelectedClientId}
+              >
+                <SelectTrigger className="bg-zinc-800 border-zinc-700">
+                  <SelectValue placeholder="Selecione um cliente" />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-800 border-zinc-700">
+                  {clients.map((client) => (
+                    <SelectItem key={client.id} value={client.id}>
+                      {client.company || client.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="grid gap-2">
             <Label htmlFor="name">Nome do Projeto *</Label>
             <Input

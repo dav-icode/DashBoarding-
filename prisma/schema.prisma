@@ -87,6 +87,18 @@ enum ProjectStatus {
   Completed
 }
 
+model Task {
+  id          String   @id @default(cuid())
+  nome        String
+  descricao   String?
+  status      String   // "todo", "doing", "review", "done"
+  prioridade  String   // "alta", "media", "baixa"
+  projetoId   String
+  projeto     Project  @relation(fields: [projetoId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Project {
   id          String   @id @default(cuid())
   name        String
@@ -102,9 +114,11 @@ model Project {
   deadline     DateTime?
   completedAt  DateTime?
   progress     Int?       @default(0)
-  estimatedHours Float?   // horas estimadas
-  workedHours    Float?   // horas trabalhadas
+  estimatedHours Float?
+  workedHours    Float?
+  tasks      Task[] 
 }
+
 
 model Sale {
   id          String   @id @default(cuid())

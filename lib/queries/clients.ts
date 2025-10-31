@@ -9,6 +9,13 @@ export async function getClients() {
     },
     include: {
       projects: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          sales: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",

@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { AddProjectDialog } from "@/components/create-project";
 import { db } from "@/lib/db";
+import Link from "next/link";
 
 type ProjetoComRelacionamentos = Prisma.ProjectGetPayload<{
   include: { client: true; sales: true };
@@ -31,10 +32,12 @@ export default async function ProjetosPage() {
   if (!session?.user) redirect("/login");
 
   const projetos = await getProjects();
-  const client = await db.client.findFirst({
-    where: {
-      userId: session.user.id,
-    },
+
+  // ✅ BUSCA TODOS OS CLIENTES (NÃO SÓ O PRIMEIRO!)
+  const clients = await db.client.findMany({
+    where: { userId: session.user.id },
+    select: { id: true, name: true, company: true },
+    orderBy: { name: "asc" },
   });
 
   // ⭐ FUNÇÕES AUXILIARES
@@ -99,13 +102,13 @@ export default async function ProjetosPage() {
           </p>
         </div>
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button className="bg-purple-600 hover:bg-purple-700">
               <Plus className="h-4 w-4 mr-2" />
               Novo Projeto
             </Button>
           </DialogTrigger>
-          <AddProjectDialog clientId={client?.id || ""} />
+          <AddProjectDialog clients={clients} />
         </Dialog>
       </div>
 
@@ -207,7 +210,8 @@ export default async function ProjetosPage() {
                     Adicionar Primeiro Projeto
                   </Button>
                 </DialogTrigger>
-                <AddProjectDialog clientId={client?.id || ""} />
+                {/* ✅ PASSA A LISTA COMPLETA DE CLIENTES */}
+                <AddProjectDialog clients={clients} />
               </Dialog>
             </div>
           ) : (
@@ -237,13 +241,15 @@ export default async function ProjetosPage() {
                         Cliente: {projeto.client.name}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-zinc-700"
-                    >
-                      Ver detalhes
-                    </Button>
+                    <Link href={`/Clientes/${projeto.client.id}`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-zinc-700"
+                      >
+                        Ver detalhes
+                      </Button>
+                    </Link>
                   </div>
 
                   {/* Barra de progresso */}

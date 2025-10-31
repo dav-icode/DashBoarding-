@@ -10,6 +10,7 @@ async function main() {
   // LIMPEZA TOTAL
   // ========================================
   console.log("🗑️  Limpando banco de dados...");
+  await prisma.task.deleteMany();
   await prisma.sale.deleteMany();
   await prisma.project.deleteMany();
   await prisma.client.deleteMany();
@@ -23,7 +24,7 @@ async function main() {
   // ========================================
   console.log("👤 Criando usuário...");
   const hashedPassword = await bcrypt.hash("123456", 10);
-  
+
   const user = await prisma.user.create({
     data: {
       email: "dev@dashboard.com",
@@ -38,23 +39,34 @@ async function main() {
   // DATAS ÚTEIS
   // ========================================
   const hoje = new Date();
-  const ontem = new Date(hoje); ontem.setDate(ontem.getDate() - 1);
-  const dias3 = new Date(hoje); dias3.setDate(dias3.getDate() + 3);
-  const dias5 = new Date(hoje); dias5.setDate(dias5.getDate() + 5);
-  const dias10 = new Date(hoje); dias10.setDate(dias10.getDate() - 10);
-  const dias15 = new Date(hoje); dias15.setDate(dias15.getDate() - 15);
-  const mes1 = new Date(hoje); mes1.setMonth(mes1.getMonth() - 1);
-  const mes2 = new Date(hoje); mes2.setMonth(mes2.getMonth() - 2);
-  const mes3 = new Date(hoje); mes3.setMonth(mes3.getMonth() - 3);
-  const mes4 = new Date(hoje); mes4.setMonth(mes4.getMonth() - 4);
-  const mes5 = new Date(hoje); mes5.setMonth(mes5.getMonth() - 5);
-  const diasAtras5 = new Date(hoje); diasAtras5.setDate(diasAtras5.getDate() - 5);
+  const ontem = new Date(hoje);
+  ontem.setDate(ontem.getDate() - 1);
+  const dias3 = new Date(hoje);
+  dias3.setDate(dias3.getDate() + 3);
+  const dias5 = new Date(hoje);
+  dias5.setDate(dias5.getDate() + 5);
+  const dias10 = new Date(hoje);
+  dias10.setDate(dias10.getDate() - 10);
+  const dias15 = new Date(hoje);
+  dias15.setDate(dias15.getDate() - 15);
+  const mes1 = new Date(hoje);
+  mes1.setMonth(mes1.getMonth() - 1);
+  const mes2 = new Date(hoje);
+  mes2.setMonth(mes2.getMonth() - 2);
+  const mes3 = new Date(hoje);
+  mes3.setMonth(mes3.getMonth() - 3);
+  const mes4 = new Date(hoje);
+  mes4.setMonth(mes4.getMonth() - 4);
+  const mes5 = new Date(hoje);
+  mes5.setMonth(mes5.getMonth() - 5);
+  const diasAtras5 = new Date(hoje);
+  diasAtras5.setDate(diasAtras5.getDate() - 5);
 
   // ========================================
   // CLIENTES (12 clientes)
   // ========================================
   console.log("🏢 Criando 12 clientes...");
-  
+
   const clientes = await Promise.all([
     // Cliente 1 - Ativo
     prisma.client.create({
@@ -177,7 +189,7 @@ async function main() {
       },
     }),
   ]);
-  
+
   console.log(`✅ ${clientes.length} clientes criados!\n`);
 
   // ========================================
@@ -201,15 +213,17 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 7500.0, 
-      description: "Entrada 50%", 
-      projectId: p1.id, 
-      userId: user.id, 
-      date: mes2 
+    data: {
+      amount: 7500.0,
+      description: "Entrada 50%",
+      projectId: p1.id,
+      userId: user.id,
+      date: mes2,
     },
   });
-  console.log(`🔴 ${p1.name} - ATRASADO há 5 dias! (R$ 15.000 - Falta R$ 7.500)`);
+  console.log(
+    `🔴 ${p1.name} - ATRASADO há 5 dias! (R$ 15.000 - Falta R$ 7.500)`
+  );
 
   // ========================================
   // 🟡 PROJETO 2: DEADLINE EM 3 DIAS (gera notificação)
@@ -227,15 +241,17 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 4250.0, 
-      description: "Entrada 50%", 
-      projectId: p2.id, 
-      userId: user.id, 
-      date: mes1 
+    data: {
+      amount: 4250.0,
+      description: "Entrada 50%",
+      projectId: p2.id,
+      userId: user.id,
+      date: mes1,
     },
   });
-  console.log(`🟡 ${p2.name} - Deadline em 3 dias! (R$ 8.500 - Falta R$ 4.250)`);
+  console.log(
+    `🟡 ${p2.name} - Deadline em 3 dias! (R$ 8.500 - Falta R$ 4.250)`
+  );
 
   // ========================================
   // 🟢 PROJETO 3: PAGAMENTO RECEBIDO HOJE (gera notificação)
@@ -254,23 +270,25 @@ async function main() {
   });
   await prisma.sale.createMany({
     data: [
-      { 
-        amount: 8800.0, 
-        description: "Entrada 40%", 
-        projectId: p3.id, 
-        userId: user.id, 
-        date: mes2 
+      {
+        amount: 8800.0,
+        description: "Entrada 40%",
+        projectId: p3.id,
+        userId: user.id,
+        date: mes2,
       },
-      { 
-        amount: 4400.0, 
-        description: "2ª Parcela - Recebido hoje! 🎉", 
-        projectId: p3.id, 
-        userId: user.id, 
-        date: hoje // ← HOJE!
+      {
+        amount: 4400.0,
+        description: "2ª Parcela - Recebido hoje! 🎉",
+        projectId: p3.id,
+        userId: user.id,
+        date: hoje, // ← HOJE!
       },
     ],
   });
-  console.log(`🟢 ${p3.name} - Pagamento recebido HOJE! R$ 4.400 (Total R$ 22.000)`);
+  console.log(
+    `🟢 ${p3.name} - Pagamento recebido HOJE! R$ 4.400 (Total R$ 22.000)`
+  );
 
   // ========================================
   // 🟣 PROJETO 4: GRANDE VALOR PENDENTE (gera notificação)
@@ -288,12 +306,12 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 13500.0, 
-      description: "Entrada 30%", 
-      projectId: p4.id, 
-      userId: user.id, 
-      date: mes3 
+    data: {
+      amount: 13500.0,
+      description: "Entrada 30%",
+      projectId: p4.id,
+      userId: user.id,
+      date: mes3,
     },
   });
   console.log(`🟣 ${p4.name} - R$ 45.000 (Falta R$ 31.500 - 70%)`);
@@ -315,15 +333,17 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 6000.0, 
-      description: "Entrada 50%", 
-      projectId: p5.id, 
-      userId: user.id, 
-      date: mes2 
+    data: {
+      amount: 6000.0,
+      description: "Entrada 50%",
+      projectId: p5.id,
+      userId: user.id,
+      date: mes2,
     },
   });
-  console.log(`⚪ ${p5.name} - SEM PROGRESSO há 15 dias (R$ 12.000 - Falta R$ 6.000)`);
+  console.log(
+    `⚪ ${p5.name} - SEM PROGRESSO há 15 dias (R$ 12.000 - Falta R$ 6.000)`
+  );
 
   // ========================================
   // ✅ PROJETO 6: COMPLETO E PAGO
@@ -342,12 +362,12 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 4500.0, 
-      description: "Pagamento integral", 
-      projectId: p6.id, 
-      userId: user.id, 
-      date: mes3 
+    data: {
+      amount: 4500.0,
+      description: "Pagamento integral",
+      projectId: p6.id,
+      userId: user.id,
+      date: mes3,
     },
   });
   console.log(`✅ ${p6.name} - COMPLETO e PAGO (R$ 4.500)`);
@@ -368,15 +388,17 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 9000.0, 
-      description: "Entrada 50%", 
-      projectId: p7.id, 
-      userId: user.id, 
-      date: mes2 
+    data: {
+      amount: 9000.0,
+      description: "Entrada 50%",
+      projectId: p7.id,
+      userId: user.id,
+      date: mes2,
     },
   });
-  console.log(`🟡 ${p7.name} - Deadline em 5 dias (R$ 18.000 - Falta R$ 9.000)`);
+  console.log(
+    `🟡 ${p7.name} - Deadline em 5 dias (R$ 18.000 - Falta R$ 9.000)`
+  );
 
   // ========================================
   // PROJETO 8: PLANEJAMENTO (sem valor recebido)
@@ -411,8 +433,20 @@ async function main() {
   });
   await prisma.sale.createMany({
     data: [
-      { amount: 3250.0, description: "Entrada 50%", projectId: p9.id, userId: user.id, date: mes4 },
-      { amount: 3250.0, description: "Final", projectId: p9.id, userId: user.id, date: mes3 },
+      {
+        amount: 3250.0,
+        description: "Entrada 50%",
+        projectId: p9.id,
+        userId: user.id,
+        date: mes4,
+      },
+      {
+        amount: 3250.0,
+        description: "Final",
+        projectId: p9.id,
+        userId: user.id,
+        date: mes3,
+      },
     ],
   });
   console.log(`✅ ${p9.name} - COMPLETO e PAGO (R$ 6.500)`);
@@ -437,12 +471,12 @@ async function main() {
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 8000.0, 
-      description: "Pagamento integral", 
-      projectId: p10.id, 
-      userId: user.id, 
-      date: mes4 
+    data: {
+      amount: 8000.0,
+      description: "Pagamento integral",
+      projectId: p10.id,
+      userId: user.id,
+      date: mes4,
     },
   });
   console.log(`💤 ${p10.name} - Cliente INATIVO há 3 meses`);
@@ -464,8 +498,20 @@ async function main() {
   });
   await prisma.sale.createMany({
     data: [
-      { amount: 15200.0, description: "Entrada 40%", projectId: p11.id, userId: user.id, date: mes2 },
-      { amount: 7600.0, description: "2ª Parcela 20%", projectId: p11.id, userId: user.id, date: mes1 },
+      {
+        amount: 15200.0,
+        description: "Entrada 40%",
+        projectId: p11.id,
+        userId: user.id,
+        date: mes2,
+      },
+      {
+        amount: 7600.0,
+        description: "2ª Parcela 20%",
+        projectId: p11.id,
+        userId: user.id,
+        date: mes1,
+      },
     ],
   });
   console.log(`🔄 ${p11.name} - Em andamento (R$ 38.000 - Falta R$ 15.200)`);
@@ -494,27 +540,328 @@ async function main() {
       price: 9500.0,
       progress: 90,
       startDate: mes1,
-      deadline: new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 10),
+      deadline: new Date(
+        hoje.getFullYear(),
+        hoje.getMonth(),
+        hoje.getDate() + 10
+      ),
       clientId: clientes[11].id,
     },
   });
   await prisma.sale.create({
-    data: { 
-      amount: 9500.0, 
-      description: "Pagamento mensal", 
-      projectId: p13.id, 
-      userId: user.id, 
-      date: mes1 
+    data: {
+      amount: 9500.0,
+      description: "Pagamento mensal",
+      projectId: p13.id,
+      userId: user.id,
+      date: mes1,
     },
   });
   console.log(`✅ ${p13.name} - Pago integralmente (R$ 9.500)`);
+
+  // ========================================
+  // TAREFAS (TASKS)
+  // ========================================
+  console.log("\n📋 Criando tarefas...\n");
+
+  // Tarefas P1 - App Mobile (ATRASADO)
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Implementar autenticação",
+        descricao: "JWT + refresh tokens",
+        status: "done",
+        prioridade: "alta",
+        projetoId: p1.id,
+      },
+      {
+        nome: "Criar tela de perfil",
+        descricao: "Edição de dados do usuário",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p1.id,
+      },
+      {
+        nome: "Integrar API de pagamentos",
+        descricao: "Stripe sandbox",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p1.id,
+      },
+      {
+        nome: "Testes de performance",
+        descricao: "Load testing",
+        status: "todo",
+        prioridade: "media",
+        projetoId: p1.id,
+      },
+    ],
+  });
+  console.log(`✅ 4 tarefas criadas para ${p1.name}`);
+
+  // Tarefas P2 - Website (3 DIAS)
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Design responsivo",
+        descricao: "Mobile e tablet",
+        status: "done",
+        prioridade: "alta",
+        projetoId: p2.id,
+      },
+      {
+        nome: "SEO on-page",
+        descricao: "Meta tags e sitemap",
+        status: "doing",
+        prioridade: "media",
+        projetoId: p2.id,
+      },
+      {
+        nome: "Formulário de contato",
+        descricao: "Com validação",
+        status: "review",
+        prioridade: "alta",
+        projetoId: p2.id,
+      },
+      {
+        nome: "Deploy Vercel",
+        descricao: "CI/CD",
+        status: "todo",
+        prioridade: "baixa",
+        projetoId: p2.id,
+      },
+    ],
+  });
+  console.log(`✅ 4 tarefas criadas para ${p2.name}`);
+
+  // Tarefas P3 - E-commerce
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Corrigir bug no checkout",
+        descricao: "Erro ao finalizar compra com cartão",
+        status: "todo",
+        prioridade: "alta",
+        projetoId: p3.id,
+      },
+      {
+        nome: "Setup banco de dados",
+        descricao: "PostgreSQL + Prisma",
+        status: "doing",
+        prioridade: "media",
+        projetoId: p3.id,
+      },
+      {
+        nome: "Integrar carrinho",
+        descricao: "Redux ou Context API",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p3.id,
+      },
+      {
+        nome: "Página de produto",
+        descricao: "Layout e funcionalidade",
+        status: "done",
+        prioridade: "media",
+        projetoId: p3.id,
+      },
+      {
+        nome: "Sistema de cupons",
+        descricao: "Desconto percentual",
+        status: "todo",
+        prioridade: "baixa",
+        projetoId: p3.id,
+      },
+    ],
+  });
+  console.log(`✅ 5 tarefas criadas para ${p3.name}`);
+
+  // Tarefas P4 - ERP
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Módulo financeiro",
+        descricao: "Contas a pagar/receber",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p4.id,
+      },
+      {
+        nome: "Módulo estoque",
+        descricao: "Controle de inventário",
+        status: "todo",
+        prioridade: "alta",
+        projetoId: p4.id,
+      },
+      {
+        nome: "Relatórios gerenciais",
+        descricao: "Dashboards e gráficos",
+        status: "todo",
+        prioridade: "media",
+        projetoId: p4.id,
+      },
+      {
+        nome: "Sistema de permissões",
+        descricao: "RBAC",
+        status: "done",
+        prioridade: "alta",
+        projetoId: p4.id,
+      },
+    ],
+  });
+  console.log(`✅ 4 tarefas criadas para ${p4.name}`);
+
+  // Tarefas P5 - Dashboard
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Setup Recharts",
+        descricao: "Biblioteca de gráficos",
+        status: "done",
+        prioridade: "media",
+        projetoId: p5.id,
+      },
+      {
+        nome: "Gráfico de linha",
+        descricao: "Faturamento mensal",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p5.id,
+      },
+      {
+        nome: "Gráfico de pizza",
+        descricao: "Status projetos",
+        status: "todo",
+        prioridade: "media",
+        projetoId: p5.id,
+      },
+    ],
+  });
+  console.log(`✅ 3 tarefas criadas para ${p5.name}`);
+
+  // Tarefas P7 - Sistema Agendamento
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Calendário de horários",
+        descricao: "Interface de agendamento",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p7.id,
+      },
+      {
+        nome: "Notificações por email",
+        descricao: "Lembrete 24h antes",
+        status: "todo",
+        prioridade: "media",
+        projetoId: p7.id,
+      },
+      {
+        nome: "Painel administrativo",
+        descricao: "Gestão de agendamentos",
+        status: "review",
+        prioridade: "alta",
+        projetoId: p7.id,
+      },
+    ],
+  });
+  console.log(`✅ 3 tarefas criadas para ${p7.name}`);
+
+  // Tarefas P8 - App Fitness (PLANEJAMENTO)
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Levantamento de requisitos",
+        descricao: "Reunião com cliente",
+        status: "todo",
+        prioridade: "alta",
+        projetoId: p8.id,
+      },
+      {
+        nome: "Protótipo Figma",
+        descricao: "Wireframes e mockups",
+        status: "todo",
+        prioridade: "media",
+        projetoId: p8.id,
+      },
+    ],
+  });
+  console.log(`✅ 2 tarefas criadas para ${p8.name}`);
+
+  // Tarefas P11 - Plataforma EAD
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Sistema de cursos",
+        descricao: "CRUD completo",
+        status: "done",
+        prioridade: "alta",
+        projetoId: p11.id,
+      },
+      {
+        nome: "Player de vídeo",
+        descricao: "Integrar Vimeo/YouTube",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p11.id,
+      },
+      {
+        nome: "Sistema de certificados",
+        descricao: "Geração automática",
+        status: "todo",
+        prioridade: "media",
+        projetoId: p11.id,
+      },
+      {
+        nome: "Área do aluno",
+        descricao: "Dashboard personalizado",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p11.id,
+      },
+    ],
+  });
+  console.log(`✅ 4 tarefas criadas para ${p11.name}`);
+
+  // Tarefas P13 - Marketing
+  await prisma.task.createMany({
+    data: [
+      {
+        nome: "Criar posts Instagram",
+        descricao: "10 posts mensais",
+        status: "done",
+        prioridade: "media",
+        projetoId: p13.id,
+      },
+      {
+        nome: "Campanha Google Ads",
+        descricao: "Budget R$ 2.000",
+        status: "doing",
+        prioridade: "alta",
+        projetoId: p13.id,
+      },
+      {
+        nome: "Relatório de métricas",
+        descricao: "Apresentar ao cliente",
+        status: "review",
+        prioridade: "media",
+        projetoId: p13.id,
+      },
+    ],
+  });
+  console.log(`✅ 3 tarefas criadas para ${p13.name}`);
+
+  const totalTasks = await prisma.task.count();
+  console.log(`\n📊 Total de tarefas: ${totalTasks}`);
 
   // ========================================
   // RESUMO FINANCEIRO
   // ========================================
   const totalProjetos = await prisma.project.count();
   const totalVendas = await prisma.sale.aggregate({ _sum: { amount: true } });
-  const totalContratos = await prisma.project.aggregate({ _sum: { price: true } });
+  const totalContratos = await prisma.project.aggregate({
+    _sum: { price: true },
+  });
 
   const recebido = totalVendas._sum.amount || 0;
   const contratos = totalContratos._sum.price || 0;
@@ -525,37 +872,81 @@ async function main() {
   console.log("=".repeat(70));
   console.log(`📊 Total de Projetos: ${totalProjetos}`);
   console.log(`📊 Total de Clientes: ${clientes.length}`);
-  console.log(`💵 Valor Total em Contratos: R$ ${contratos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
-  console.log(`✅ Total Recebido: R$ ${recebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
-  console.log(`⏳ Total A Receber: R$ ${aReceber.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`);
-  console.log(`📈 Taxa de Recebimento: ${((recebido / contratos) * 100).toFixed(1)}%`);
+  console.log(`📋 Total de Tarefas: ${totalTasks}`);
+  console.log(
+    `💵 Valor Total em Contratos: R$ ${contratos.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+    })}`
+  );
+  console.log(
+    `✅ Total Recebido: R$ ${recebido.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+    })}`
+  );
+  console.log(
+    `⏳ Total A Receber: R$ ${aReceber.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+    })}`
+  );
+  console.log(
+    `📈 Taxa de Recebimento: ${((recebido / contratos) * 100).toFixed(1)}%`
+  );
   console.log("=".repeat(70));
 
   // Status dos projetos
   const statusCount = await prisma.project.groupBy({
-    by: ['status'],
+    by: ["status"],
     _count: true,
   });
 
   console.log("\n📊 PROJETOS POR STATUS:");
-  statusCount.forEach(s => {
-    const emoji = s.status === 'Completed' ? '✅' : s.status === 'In Progress' ? '🔄' : '⏳';
+  statusCount.forEach((s) => {
+    const emoji =
+      s.status === "Completed"
+        ? "✅"
+        : s.status === "In Progress"
+        ? "🔄"
+        : "⏳";
+    console.log(`  ${emoji} ${s.status}: ${s._count}`);
+  });
+
+  // Status das tarefas
+  const taskStatusCount = await prisma.task.groupBy({
+    by: ["status"],
+    _count: true,
+  });
+
+  console.log("\n📋 TAREFAS POR STATUS:");
+  taskStatusCount.forEach((s) => {
+    const emoji =
+      s.status === "done"
+        ? "✅"
+        : s.status === "doing"
+        ? "🔄"
+        : s.status === "review"
+        ? "👀"
+        : "⏳";
     console.log(`  ${emoji} ${s.status}: ${s._count}`);
   });
 
   console.log("\n🔔 NOTIFICAÇÕES QUE DEVEM APARECER:");
   console.log("  🔴 1 projeto atrasado (App Mobile Urgente)");
-  console.log("  🟡 2 deadlines próximos (Website em 3 dias, Sistema em 5 dias)");
+  console.log(
+    "  🟡 2 deadlines próximos (Website em 3 dias, Sistema em 5 dias)"
+  );
   console.log("  🟢 1 pagamento recebido hoje (E-commerce R$ 4.400)");
   console.log("  🟣 Múltiplos pagamentos pendentes");
   console.log("  ⚪ 1 projeto sem progresso há 15 dias (Dashboard)");
   console.log("  💤 2 clientes inativos (há 3+ meses)");
 
-  console.log("\n🎉 SEED COMPLETO! Dashboard pronto para testar! 🚀");
+  console.log(
+    "\n🎉 SEED COMPLETO COM TAREFAS! Dashboard pronto para testar! 🚀"
+  );
   console.log("\n🔑 LOGIN:");
   console.log(`   Email: dev@dashboard.com`);
   console.log(`   Senha: 123456`);
-  console.log("\n💡 Acesse /dashboard para ver as notificações funcionando!\n");
+  console.log("\n💡 Acesse /dashboard para ver as notificações funcionando!");
+  console.log("💡 Acesse /Tarefas para ver o Kanban com 32 tarefas!\n");
 }
 
 main()

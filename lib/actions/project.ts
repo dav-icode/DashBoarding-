@@ -21,11 +21,22 @@ export async function createProject(formData: FormData) {
   const startDate = formData.get("startDate") as string | null;
   const deadline = formData.get("deadline") as string | null;
 
-  // Validações
-  if (!name?.trim() || !clientId) {
-    return { error: "Nome e ID do cliente são obrigatórios" };
-  }
+  console.log("📋 Dados recebidos:", {
+    name,
+    description,
+    status,
+    price,
+    clientId,
+    progress,
+    startDate,
+    deadline,
+  });
 
+  // Validações
+  if (!name?.trim()) return { error: "Nome do projeto obrigatório" };
+  if (!clientId || clientId === "null" || clientId === "undefined") {
+    return { error: "ClienteId inválido ou não fornecido" };
+  }
   try {
     const newProject = await db.project.create({
       data: {
